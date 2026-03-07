@@ -16,7 +16,7 @@ public class MoveAction : BaseAction
 
     private List<Vector3> positionList;
     private int currentPositionIndex = 0;
-    [SerializeField] private int maxMoveDistance = 0;
+    [SerializeField] private int maxMoveDistance;
 
     private bool isChangingFloors;
     private float differentFloorsTeleportTimer;
@@ -26,19 +26,6 @@ public class MoveAction : BaseAction
     protected override void Awake()
     {
         base.Awake();
-    }
-
-    private void Start()
-    {
-        if (unit.GetUnitStat() != null)
-        {
-            maxMoveDistance = unit.GetUnitStat().GetMoveRange();
-        }
-        else
-        {
-            Debug.LogError($"{unit.name} is missing UnitStat component! Check the prefab in Inspector.");
-            // maxMoveDistance keeps its serialized default value
-        }
     }
     private void Update()
     {

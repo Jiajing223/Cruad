@@ -902,7 +902,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b7ef0ff68b2d44c9d03006dceb852d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxMoveDistance: 2
+  maxMoveDistance: 3
 --- !u!114 &4726858121473081272
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -927,6 +927,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8143ed510d2a884ca556246b85178ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitTextPopupPrefab: {fileID: 7133544746814532165, guid: 33095362410cbbd419279bc186d7ae51, type: 3}
+  missTextPopupPrefab: {fileID: 8736219302462207268, guid: d6ef54b39c835a34c872c4ce0944a41b, type: 3}
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -1016,6 +1018,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attack: 10
   defense: 5
+  speed: 5
+  critialChance: 5
   moveRange: 4
 --- !u!1 &7747342256806428759
 GameObject:

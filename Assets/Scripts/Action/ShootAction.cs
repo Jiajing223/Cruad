@@ -5,7 +5,8 @@ using System;
 
 public class ShootAction : BaseAction
 {
-
+    [SerializeField] private ShootHitPopup hitTextPopupPrefab;
+    [SerializeField] private ShootMissedPopup missTextPopupPrefab;
     private enum State
     {
         Aiming,
@@ -21,13 +22,16 @@ public class ShootAction : BaseAction
     {
         public Unit targetUnit;
         public Unit shootingUnit;
+        public bool isHit;
     }
 
     [SerializeField] private LayerMask obstaclesLayerMask;
     private State state;
-    private int maxShootDistance = 5;
+    private int maxShootDistance = 8;
     private float stateTimer;
-
+    private float baseHitChance = UnitStat.GetAccuracy() / 100f;
+    private const float DistancePenaltyPerTile = 0.02f;
+    private const float HighGroundBonus = 0.10f;
     private Unit targetUnit;
     private Vector3 targetUnitPosition;
     private bool canShootBullet;
@@ -179,20 +183,57 @@ public class ShootAction : BaseAction
                 break;
         }
     }
+    public float GetHitChance(GridPosition shooterGridPosition, Unit target)
+    {
+        float hitChance = baseHitChance;
 
+        // Distance penalty 
+        GridPosition targetGrid = target.GetGridPosition();
+        int dist = Mathf.Abs(targetGrid.x - shooterGridPosition.x)
+                          + Mathf.Abs(targetGrid.z - shooterGridPosition.z);
+
+        // Penalty starts from distance 3 onward
+        int penaltyTiles = Mathf.Max(0, dist - 2);
+        hitChance -= penaltyTiles * DistancePenaltyPerTile;
+
+        // High-ground bonus
+        if (shooterGridPosition.floor > targetGrid.floor)
+        {
+            hitChance += HighGroundBonus;
+        }
+
+        return Mathf.Clamp01(hitChance);
+    }
     private void Shoot()
     {
+        GridPosition shooterGrid = unit.GetGridPosition();
+        float hitChance = GetHitChance(shooterGrid, targetUnit);
+        bool isHit = UnityEngine.Random.value <= hitChance;
         OnAnyShoot?.Invoke(this, new OnShootEventArgs
         {
             targetUnit = targetUnit,
-            shootingUnit = unit
+            shootingUnit = unit,
+            isHit = isHit
         });
         OnShoot?.Invoke(this, new OnShootEventArgs
         {
             targetUnit = targetUnit,
-            shootingUnit = unit
+            shootingUnit = unit,
+            isHit = isHit
         });
-        targetUnit.Damage(unit, targetUnit);
+        if (isHit)
+        {
+            int damage = targetUnit.GetComponent<HealthSystem>().GetCalculatedDamage(unit, targetUnit);
+            targetUnit.Damage(unit, targetUnit);
+
+            Vector3 spawnPos = targetUnit.GetWorldPosition() + Vector3.up * 2f;
+            ShootHitPopup popup = Instantiate(hitTextPopupPrefab, spawnPos, Quaternion.identity);
+            popup.Setup(damage);
+        } else
+        {
+            Vector3 spawnPos = targetUnit.GetWorldPosition() + Vector3.up * 2f;
+            Instantiate(missTextPopupPrefab, spawnPos, Quaternion.identity);
+        }
     }
 
     public Unit GetTargetUnit()
@@ -208,10 +249,11 @@ public class ShootAction : BaseAction
     public override EnemyAIAction GetBestEnemyAIAction(GridPosition gridPosition)
     {
         Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(gridPosition);
+        float hitChance = GetHitChance(unit.GetGridPosition(), targetUnit);
         return new EnemyAIAction
         {
             gridPosition = gridPosition,
-            actionValue = 100 + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 100f),
+            actionValue = 100 + Mathf.RoundToInt(hitChance * (1 - targetUnit.GetHealthNormalized()) * 100f),
         };
     }
 

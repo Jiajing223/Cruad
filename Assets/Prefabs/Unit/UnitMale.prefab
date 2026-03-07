@@ -1163,7 +1163,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7746785424968111513}
-  m_LocalRotation: {x: -0.026038924, y: 0.9560221, z: 0.016327376, w: 0.2916799}
+  m_LocalRotation: {x: -0.026038926, y: 0.9560221, z: 0.016327377, w: 0.2916799}
   m_LocalPosition: {x: 0.151, y: 0.017, z: 0.049}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
@@ -1313,6 +1313,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8143ed510d2a884ca556246b85178ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitTextPopupPrefab: {fileID: 7133544746814532165, guid: 33095362410cbbd419279bc186d7ae51, type: 3}
+  missTextPopupPrefab: {fileID: 8736219302462207268, guid: d6ef54b39c835a34c872c4ce0944a41b, type: 3}
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 320
@@ -1442,6 +1444,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attack: 10
   defense: 5
+  speed: 5
+  critialChance: 5
   moveRange: 4
 --- !u!1 &7747342256806428759
 GameObject:
@@ -2903,7 +2907,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7748261159966106109}
   m_LocalRotation: {x: 0.23888499, y: -0.32672933, z: -0.56156594, w: 0.7216825}
-  m_LocalPosition: {x: 0.009859799, y: 0.9111507, z: -0.003957152}
+  m_LocalPosition: {x: 0.009860197, y: 0.9111507, z: -0.0039569535}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

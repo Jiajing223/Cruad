@@ -57,4 +57,9 @@ public class HealthSystem : MonoBehaviour
     {
         return (float)health / healthMax;
     }
+
+    public int GetCalculatedDamage(Unit userUnit, Unit targetUnit)
+{
+    return calculateDamage(userUnit, targetUnit);
+}
 }

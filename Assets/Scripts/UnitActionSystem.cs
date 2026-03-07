@@ -193,15 +193,25 @@ public class UnitActionSystem : MonoBehaviour
         // Starts the target selection sequence
         CameraManager.Instance.ShowShootCameraPreview(selectedUnit, mouseGridPosition);
         isSelectingTarget = true;
-        OnUnitSelectingTarget?.Invoke(this, isSelectingTarget);
         tempTargetPosition = mouseGridPosition;
+        OnUnitSelectingTarget?.Invoke(this, isSelectingTarget);
     }
 
     private void UnitActionSystem_OnTargetSelectionConfirm(object sender, EventArgs e)
     {
         // Performs the action
-        SetBusy();
-        selectedAction.TakeAction(tempTargetPosition, ClearBusy);
+        if (selectedUnit.TrySpendActionPointsToTakeAction(selectedAction))
+        {
+            SetBusy();
+            selectedAction.TakeAction(tempTargetPosition, ClearBusy);
+        }
+        else
+        {
+            // Not enough action points, close the UI 
+            UnitActionSystem_OnTargetSelectionCancel(sender, e);
+            return;
+        }
+
         // Disables the UI
         isSelectingTarget = false;
         OnUnitSelectingTarget?.Invoke(this, isSelectingTarget);
@@ -252,5 +262,7 @@ public class UnitActionSystem : MonoBehaviour
     {
         return selectedUnit;
     }
+
+    public GridPosition GetTempTargetPosition() => tempTargetPosition;
 
 }
