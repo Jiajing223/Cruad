@@ -14,10 +14,12 @@ public abstract class BaseAction : MonoBehaviour
     protected bool isActive;
     protected Action onActionComplete;
 
+    private LayerMask coverLayerMask;
     
     protected virtual void Awake()
     {
         unit = GetComponent<Unit>();
+        coverLayerMask = LayerMask.GetMask("CoverObject");
     }
 
     public abstract string GetActionName();
@@ -96,7 +98,10 @@ public abstract class BaseAction : MonoBehaviour
     public float GetHitChance(GridPosition shooterGridPosition, Unit target, float baseHitChance, bool useDistancePenalty = true, bool useHighGround = true)
     {
         float hitChance = baseHitChance;
-
+        Vector3 attackerWorld = LevelGrid.Instance.GetWorldPosition(shooterGridPosition) + Vector3.up * 0.1f;
+        Vector3 targetWorld = LevelGrid.Instance.GetWorldPosition(target.GetGridPosition()) + Vector3.up * 0.1f;
+        Vector3 shootDir = (targetWorld - attackerWorld).normalized;
+        float distance = Vector3.Distance(attackerWorld, targetWorld);
         GridPosition targetGrid = target.GetGridPosition();
 
         // Distance penalty
@@ -113,12 +118,15 @@ public abstract class BaseAction : MonoBehaviour
         {
             hitChance += HighGroundBonus;
         }
-
-        // Cover dodge penalty
-        GridObject targetGridObject = LevelGrid.Instance.GetGridObject(targetGrid);
-        float coverPenalty = targetGridObject.GetCoverDodgeBonus() / 100f;
-        hitChance -= coverPenalty;
-
+        
+        // Flanking bonus
+        if (Physics.Raycast(attackerWorld, shootDir, out RaycastHit hit, distance, coverLayerMask))
+        {
+            if (hit.collider.TryGetComponent<CoverObject>(out CoverObject cover))
+            {
+                hitChance -= cover.GetDodgeBonus() / 100f;
+            }
+        }
         return Mathf.Clamp01(hitChance);
     }
     public abstract EnemyAIAction GetBestEnemyAIAction(GridPosition gridPosition);

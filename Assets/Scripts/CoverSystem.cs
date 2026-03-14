@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class CoverSystem : MonoBehaviour
 {
+    [SerializeField] private LayerMask coverLayerMask;
     private static readonly GridPosition[] neighborOffsets = new GridPosition[]
     {
         new GridPosition( 1, 0, 0),
@@ -24,4 +25,6 @@ public class CoverSystem : MonoBehaviour
             }
         }
     }
+
+    private LayerMask GetCoverLayerMask() => coverLayerMask;
 }
