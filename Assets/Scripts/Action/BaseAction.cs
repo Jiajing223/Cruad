@@ -7,11 +7,14 @@ public abstract class BaseAction : MonoBehaviour
     // Action will be overwritten by each action that inherits from BaseAction
     public static event EventHandler OnAnyActionStarted;
     public static event EventHandler OnAnyActionCompleted;
-
+    private const float DistancePenaltyPerTile = 0.02f;
+    private const float HighGroundBonus = 0.10f;
 
     protected Unit unit;
     protected bool isActive;
     protected Action onActionComplete;
+
+    
     protected virtual void Awake()
     {
         unit = GetComponent<Unit>();
@@ -90,6 +93,33 @@ public abstract class BaseAction : MonoBehaviour
         else if (dz > 0) unit.SetFacingDirection(Unit.FacingDirection.North);
         else unit.SetFacingDirection(Unit.FacingDirection.South);
     }
+    public float GetHitChance(GridPosition shooterGridPosition, Unit target, float baseHitChance, bool useDistancePenalty = true, bool useHighGround = true)
+    {
+        float hitChance = baseHitChance;
 
+        GridPosition targetGrid = target.GetGridPosition();
+
+        // Distance penalty
+        if (useDistancePenalty)
+        {
+            int dist = Mathf.Abs(targetGrid.x - shooterGridPosition.x)
+                    + Mathf.Abs(targetGrid.z - shooterGridPosition.z);
+            int penaltyTiles = Mathf.Max(0, dist - 2);
+            hitChance -= penaltyTiles * DistancePenaltyPerTile;
+        }
+
+        // High-ground bonus
+        if (useHighGround && shooterGridPosition.floor > targetGrid.floor)
+        {
+            hitChance += HighGroundBonus;
+        }
+
+        // Cover dodge penalty
+        GridObject targetGridObject = LevelGrid.Instance.GetGridObject(targetGrid);
+        float coverPenalty = targetGridObject.GetCoverDodgeBonus() / 100f;
+        hitChance -= coverPenalty;
+
+        return Mathf.Clamp01(hitChance);
+    }
     public abstract EnemyAIAction GetBestEnemyAIAction(GridPosition gridPosition);
 }

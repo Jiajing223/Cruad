@@ -12,7 +12,12 @@ public class UnitActionSystem : MonoBehaviour
     public static UnitActionSystem Instance { get; private set; }
     // Event: called when the selected unit changes
     public event EventHandler OnSelectedUnitChanged;
-    public event EventHandler<bool> OnUnitSelectingTarget;
+    public event EventHandler<ShootSelectionEventArgs> OnUnitSelectingTarget;
+    public class ShootSelectionEventArgs : EventArgs
+    {
+        public bool isSelectingTarget;
+        public GridPosition targetGridPosition;
+    }
     // Event: called when the selected action changes
     public event EventHandler OnSelectedActionChanged;
 
@@ -194,7 +199,11 @@ public class UnitActionSystem : MonoBehaviour
         CameraManager.Instance.ShowShootCameraPreview(selectedUnit, mouseGridPosition);
         isSelectingTarget = true;
         tempTargetPosition = mouseGridPosition;
-        OnUnitSelectingTarget?.Invoke(this, isSelectingTarget);
+        OnUnitSelectingTarget?.Invoke(this, new ShootSelectionEventArgs 
+        { 
+            isSelectingTarget = true, 
+            targetGridPosition = mouseGridPosition 
+        });
     }
 
     private void UnitActionSystem_OnTargetSelectionConfirm(object sender, EventArgs e)
@@ -214,7 +223,10 @@ public class UnitActionSystem : MonoBehaviour
 
         // Disables the UI
         isSelectingTarget = false;
-        OnUnitSelectingTarget?.Invoke(this, isSelectingTarget);
+        OnUnitSelectingTarget?.Invoke(this, new ShootSelectionEventArgs 
+        { 
+            isSelectingTarget = false 
+        });
     }
     private void UnitActionSystem_OnTargetSelectionCancel(object sender, EventArgs e)
     {
@@ -223,7 +235,10 @@ public class UnitActionSystem : MonoBehaviour
         isRotating = true;
         // Disables the UI
         isSelectingTarget = false;
-        OnUnitSelectingTarget?.Invoke(this, isSelectingTarget);
+        OnUnitSelectingTarget?.Invoke(this, new ShootSelectionEventArgs 
+        { 
+            isSelectingTarget = false 
+        });
     }
     // Set the system to busy (disables new actions)
     private void SetBusy()

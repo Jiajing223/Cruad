@@ -12,9 +12,9 @@ public class UnitTargetSelectionUI : MonoBehaviour
     }
 
 
-    private void UnitActionSystem_OnUnitSelectingTarget(object sender, bool isSelectingTarget)
+    private void UnitActionSystem_OnUnitSelectingTarget(object sender, UnitActionSystem.ShootSelectionEventArgs args)
     {
-        if (isSelectingTarget)
+        if (args.isSelectingTarget)
         {
             Show();
         }

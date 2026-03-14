@@ -6,10 +6,10 @@ public class ShootHitPopup : MonoBehaviour
 {
     [SerializeField] private TextMeshPro hitText;
     private float floatSpeed = 2f;
-    private float fadeSpeed  = 2f;
+    // private float fadeSpeed  = 2f;
     private float lifetime   = 1f;
     private float timer;
-    private int damage;
+    // private int damage;
     public void Setup(int damage)
     {
         hitText.text  = damage.ToString();

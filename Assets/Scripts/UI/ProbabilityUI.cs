@@ -10,38 +10,34 @@ public class ProbabilityUI : MonoBehaviour
     private Color mediumChanceColor = Color.yellow;  // >= 40%
     private Color lowChanceColor = Color.red;     // <  40%
 
-    void Start()
+    void Awake()
     {
         UnitActionSystem.Instance.OnUnitSelectingTarget += UnitActionSystem_OnUnitSelectingTarget;
         gameObject.SetActive(false);
     }
 
-    private void UnitActionSystem_OnUnitSelectingTarget(object sender, bool isSelectingTarget)
+    private void UnitActionSystem_OnUnitSelectingTarget(object sender, UnitActionSystem.ShootSelectionEventArgs args)
     {
-        gameObject.SetActive(isSelectingTarget);
+        if (!args.isSelectingTarget)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
+
         ShootAction shootAction = UnitActionSystem.Instance.GetSelectedAction() as ShootAction;
         if (shootAction == null) return;
 
-        GridPosition shooterGrid = UnitActionSystem.Instance.GetSelectedUnit().GetGridPosition();
-        GridPosition targetGrid = UnitActionSystem.Instance.GetTempTargetPosition();
-        Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(targetGrid);
-
+        Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(args.targetGridPosition);
         if (targetUnit == null) return;
 
+        GridPosition shooterGrid = UnitActionSystem.Instance.GetSelectedUnit().GetGridPosition();
         float hitChance = shootAction.GetHitChance(shooterGrid, targetUnit);
-        
-        probabilityText.text  = $"Hit Chance: {Mathf.RoundToInt(hitChance * 100f)}%";
 
-        if(hitChance >= 0.8f)
-        {
-            probabilityText.color = highChanceColor;
-        } else if (hitChance >= 0.7f)
-        {
-            probabilityText.color = mediumChanceColor;
-        } else
-        {
-            probabilityText.color = lowChanceColor;
-        }
+        probabilityText.text = $"Hit Chance: {Mathf.RoundToInt(hitChance * 100f)}%";
+        probabilityText.color = hitChance >= 0.8f ? highChanceColor 
+                            : hitChance >= 0.7f ? mediumChanceColor 
+                            : lowChanceColor;
 
+        gameObject.SetActive(true);
     }
 }

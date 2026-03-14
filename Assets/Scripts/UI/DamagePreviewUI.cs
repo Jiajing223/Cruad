@@ -6,26 +6,28 @@ public class DamagePreviewUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI damagePreviewText;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         UnitActionSystem.Instance.OnUnitSelectingTarget += UnitActionSystem_OnUnitSelectingTarget;
         gameObject.SetActive(false);
     }
 
-    private void UnitActionSystem_OnUnitSelectingTarget(object sender, bool isSelectingTarget)
+    private void UnitActionSystem_OnUnitSelectingTarget(object sender, UnitActionSystem.ShootSelectionEventArgs args)
     {
-        gameObject.SetActive(isSelectingTarget);
-        if (!isSelectingTarget) return;
+        if (!args.isSelectingTarget)
+        {
+            gameObject.SetActive(false);
+            return;
+        }
 
         Unit shooterUnit = UnitActionSystem.Instance.GetSelectedUnit();
-        GridPosition targetGrid = UnitActionSystem.Instance.GetTempTargetPosition();
-        Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(targetGrid);
-
+        Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(args.targetGridPosition);
         if (targetUnit == null) return;
 
         int damage = targetUnit.GetComponent<HealthSystem>().GetCalculatedDamage(shooterUnit, targetUnit);
         damagePreviewText.text = $"Damage: {damage}";
+
+        gameObject.SetActive(true);
     }
     void Update()
     {

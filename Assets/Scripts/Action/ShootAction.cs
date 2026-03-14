@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
 public class ShootAction : BaseAction
 {
     [SerializeField] private ShootHitPopup hitTextPopupPrefab;
@@ -27,21 +26,27 @@ public class ShootAction : BaseAction
 
     [SerializeField] private LayerMask obstaclesLayerMask;
     private State state;
-    private int maxShootDistance = 8;
+    private int maxShootDistance = 12;
     private float stateTimer;
-    private float baseHitChance = UnitStat.GetAccuracy() / 100f;
-    private const float DistancePenaltyPerTile = 0.02f;
-    private const float HighGroundBonus = 0.10f;
+    private float baseHitChance;
     private Unit targetUnit;
     private Vector3 targetUnitPosition;
     private bool canShootBullet;
     private float rotateSpeed = 10f;
+    protected override void Awake()
+    {
+        base.Awake();
+        baseHitChance = UnitStat.GetAccuracy() / 100f;
+    }
 
     public override string GetActionName()
     {
         return "Shoot";
     }
-
+    public float GetHitChance(GridPosition shooterGridPosition, Unit target)
+    {
+        return GetHitChance(shooterGridPosition, target, baseHitChance);
+    }
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
         targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(gridPosition);
@@ -182,7 +187,7 @@ public class ShootAction : BaseAction
                 ActionComplete();
                 break;
         }
-    }
+    }/*
     public float GetHitChance(GridPosition shooterGridPosition, Unit target)
     {
         float hitChance = baseHitChance;
@@ -202,8 +207,12 @@ public class ShootAction : BaseAction
             hitChance += HighGroundBonus;
         }
 
+        // Cover dodge penalty
+        GridObject targetGridObject = LevelGrid.Instance.GetGridObject(targetGrid);
+        float coverPenalty = targetGridObject.GetCoverDodgeBonus() / 100f;
+        hitChance -= coverPenalty;
         return Mathf.Clamp01(hitChance);
-    }
+    }*/
     private void Shoot()
     {
         GridPosition shooterGrid = unit.GetGridPosition();

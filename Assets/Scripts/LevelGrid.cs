@@ -21,7 +21,6 @@ public class LevelGrid : MonoBehaviour
 
     private void Awake()
     {
-        // 单例初始化
         if (Instance != null)
         {
             Debug.LogError("There's more than one UnitActionSystem! " + transform + " - " + Instance);
@@ -34,7 +33,6 @@ public class LevelGrid : MonoBehaviour
 
         for (int floor = 0; floor < floorAmount; floor++)
         {
-            // 创建网格系统
             GridSystem<GridObject> gridSystem = new GridSystem<GridObject>(width, height, cellSize, floor, FLOOR_HEIGHT,
                     (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition));
 
@@ -45,35 +43,30 @@ public class LevelGrid : MonoBehaviour
 
     private void Start()
     {
-        // 初始化路径查找系统
         PathFinding.Instance.Setup(width, height, cellSize, floorAmount);
     }
     private GridSystem<GridObject> GetGridSystem(int floor)
     {
         return gridSystemList[floor];
     }
-    // 在网格位置添加单位
     public void AddUnitGridPosition(GridPosition gridPosition, Unit unit)
     {
         GridObject gridObject = GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
         gridObject.AddUnit(unit);
     }
 
-    // 获取网格位置上的所有单位
     public List<Unit> GetUnitListGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
         return gridObject.GetUnitList();
     }
 
-    // 从网格位置移除特定单位
     public void RemoveUnitGridPosition(GridPosition gridPosition, Unit unit)
     {
         GridObject gridObject = GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
         gridObject.RemoveUnit(unit);
     }
 
-    // 从网格位置移除所有单位
     public void RemoveUnitGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
@@ -81,7 +74,6 @@ public class LevelGrid : MonoBehaviour
         gridObject.RemoveUnit(unit);
     }
 
-    // 处理单位网格位置移动
     public void UnitMovedGridPosition(Unit unit, GridPosition fromGridPosition, GridPosition toGridPosition)
     {
         RemoveUnitGridPosition(fromGridPosition, unit);
@@ -93,7 +85,7 @@ public class LevelGrid : MonoBehaviour
     {
         return Mathf.RoundToInt(worldPosition.y / FLOOR_HEIGHT);
     }
-    // 坐标转换方法
+
     public GridPosition GetGridPosition(Vector3 worldPosition)
     {
         int floor = GetFloor(worldPosition);
@@ -101,7 +93,6 @@ public class LevelGrid : MonoBehaviour
     }
     public Vector3 GetWorldPosition(GridPosition gridPosition) => GetGridSystem(gridPosition.floor).GetWorldPosition(gridPosition);
 
-    // 网格信息获取方法
     public int GetWidth() => GetGridSystem(0).GetWidth();
     public int GetHeight() => GetGridSystem(0).GetHeight();
     public bool IsValidGridPosition(GridPosition gridPosition) {
@@ -116,7 +107,6 @@ public class LevelGrid : MonoBehaviour
     }
 
     public int GetFloorAmount() => floorAmount;
-    // 单位查询方法
     public bool HasAnyUnitOnGridPosition(GridPosition gridPosition)
     {
         GridObject gridObject = GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
@@ -157,5 +147,10 @@ public class LevelGrid : MonoBehaviour
             }
         }
         return -1; // No valid floor
+    }
+
+    public GridObject GetGridObject(GridPosition gridPosition)
+    {
+        return GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
     }
 }
