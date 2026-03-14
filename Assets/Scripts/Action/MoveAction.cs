@@ -7,7 +7,7 @@ public class MoveAction : BaseAction
     public event EventHandler OnStartMoving;
     public event EventHandler OnStopMoving;
     public event EventHandler<OnChangedFloorsStartedEventArgs> OnChangedFloorsStarted;
-
+    
     public class OnChangedFloorsStartedEventArgs : EventArgs
     {
         public GridPosition unitGridPosition;
@@ -81,6 +81,7 @@ public class MoveAction : BaseAction
                 }
                 // Reached final position
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
+                unit.UpdateCoverState();
                 ActionComplete();
                 return;
             }

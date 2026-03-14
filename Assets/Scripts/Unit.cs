@@ -23,8 +23,8 @@ public class Unit : MonoBehaviour
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
+    public static event EventHandler OnAnyCoverStateChanged;
     [SerializeField] private bool isEnemy;
-
 
     private GridPosition gridPosition;
     private HealthSystem healthSystem;
@@ -35,7 +35,7 @@ public class Unit : MonoBehaviour
     private BaseAction[] baseActionArray;
     private const int totalActionPoints = 5;
     private int actionPoints = totalActionPoints;
-
+    private bool isCovered;
     private void Awake()
     {
         unitStat = GetComponent<UnitStat>();
@@ -53,6 +53,7 @@ public class Unit : MonoBehaviour
 
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.AddUnitGridPosition(gridPosition, this);
+        LevelGrid.Instance.OnAnyUnitMovedGridPosition += (sender, e) => UpdateCoverState();
         healthSystem.OnDead += HealthSystem_OnDead;
     }
     private void Update()
@@ -153,8 +154,8 @@ public class Unit : MonoBehaviour
     {
         if ((isEnemy && !TurnSystem.Instance.IsPlayerTurn()) || (!isEnemy && TurnSystem.Instance.IsPlayerTurn()))
         {
-
             RegenerateActionPoints();
+            UpdateCoverState();
             OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
         }
 
@@ -187,6 +188,67 @@ public class Unit : MonoBehaviour
     {
         return healthSystem.GetHealthNormalized();
     }
+    public bool GetIsCovered()
+    {
+        Vector3 unitWorld = GetWorldPosition() + Vector3.up * 0.1f;
+        GridPosition[] directions = new GridPosition[]
+        {
+            new GridPosition( 1, 0, 0),
+            new GridPosition(-1, 0, 0),
+            new GridPosition( 0, 1, 0),
+            new GridPosition( 0,-1, 0),
+        };
 
+        foreach (GridPosition dir in directions)
+        {
+            Vector3 worldDir = new Vector3(dir.x, 0, dir.z);
+            if (Physics.Raycast(unitWorld, worldDir, 1f, LayerMask.GetMask("CoverObject")))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public Vector3 GetCoverDirection()
+    {
+        Vector3 unitWorld = GetWorldPosition() + Vector3.up * 0.1f;
+        GridPosition[] directions = new GridPosition[]
+        {
+            new GridPosition( 1, 0, 0),
+            new GridPosition(-1, 0, 0),
+            new GridPosition( 0, 1, 0),
+            new GridPosition( 0,-1, 0),
+        };
+
+        foreach (GridPosition dir in directions)
+        {
+            Vector3 worldDir = new Vector3(dir.x, 0, dir.z);
+            if (Physics.Raycast(unitWorld, worldDir, 1f, LayerMask.GetMask("CoverObject")))
+            {
+                return worldDir; // direction toward the cover
+            }
+        }
+        return Vector3.zero;
+    }
+    public void UpdateCoverState()
+    {
+        bool newCoveredState = GetIsCovered();
+        if (newCoveredState != isCovered)
+        {
+            isCovered = newCoveredState;
+            OnAnyCoverStateChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public bool IsCovered()
+    {
+        return isCovered;
+    }
+
+        public void ForceUpdateCoverState()
+    {
+        isCovered = !GetIsCovered(); // flip it so the change check always triggers
+        UpdateCoverState();
+    }
 }
     

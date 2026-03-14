@@ -8,7 +8,6 @@ public class GridObject
     private GridSystem<GridObject> gridSystem;
     private List<Unit> unitList;
     private IInteractable interactable;
-    private int coverDodgeBonus;
     public GridObject(GridSystem<GridObject> gridSystem, GridPosition gridPosition)
     {
         this.gridSystem = gridSystem;
@@ -60,13 +59,5 @@ public class GridObject
     {
         this.interactable = interactable;
     }
-    public void SetCoverDodgeBonus(int bonus)
-    {
-        coverDodgeBonus = bonus;
-    }
 
-    public int GetCoverDodgeBonus()
-    {
-        return coverDodgeBonus;
-    }
 }

@@ -8,20 +8,19 @@ public class PathFinding : MonoBehaviour
 { 
     public static PathFinding Instance { get; private set; }
 
-    // A*路径查找算法常量
-    private const int MOVE_STRAIGHT_COST = 10;  // 直线移动成本
-    private const int MOVE_DIAGONAL_COST = 14;  // 对角线移动成本
+    private const int MOVE_STRAIGHT_COST = 10;  
+    private const int MOVE_DIAGONAL_COST = 14;  
     
-    [SerializeField] private LayerMask obsticlesLayerMask;  // 障碍物层遮罩
-    [SerializeField] private Transform debugPrefab;         // 调试用预制体
+    [SerializeField] private LayerMask obsticlesLayerMask; 
+    [SerializeField] private Transform debugPrefab;         
     [SerializeField] private LayerMask floorLayerMask;  
     [SerializeField] private Transform pathFindingLinkContainer;  
 
-    private int width;      // 网格宽度
-    private int height;     // 网格高度
-    private int cellSize;   // 格子大小
+    private int width;      
+    private int height;     
+    private int cellSize;   
     private int floorAmount;
-    private List<GridSystem<PathNode>> gridSystemList;  // 路径节点网格系统
+    private List<GridSystem<PathNode>> gridSystemList;  
 
     private List<PathFindingLink> pathfindingLinkList;
     private void Awake()

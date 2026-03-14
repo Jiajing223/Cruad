@@ -30,6 +30,10 @@ public class UnitAnimator : MonoBehaviour
             swordAction.OnSwordActionStarted += SwordAction_OnSwordActionStarted;
             swordAction.OnSwordActionCompleted += SwordAction_OnSwordActionCompleted;
         }
+        if (TryGetComponent<Unit>(out Unit unit))
+        {
+            Unit.OnAnyCoverStateChanged += Unit_OnAnyCoverStateChanged;
+        }
     }
 
     private void MoveAction_OnChangedFloorsStarted(object sender, MoveAction.OnChangedFloorsStartedEventArgs e)
@@ -47,6 +51,9 @@ public class UnitAnimator : MonoBehaviour
     private void Start()
     {
         EquipRifle();
+        UnitActionSystem.Instance.OnUnitSelectingTarget += UnitActionSystem_OnUnitSelectingTarget;
+        SelectionNoShootUI.Instance.OnTargetSelectionCancel += SelectionNoShootUI_OnTargetSelectionCancel;
+        ShootAction.OnAnyShoot += ShootAction_OnAnyShoot;
     }
     private void SwordAction_OnSwordActionStarted(object sender, System.EventArgs e)
     {
@@ -60,6 +67,7 @@ public class UnitAnimator : MonoBehaviour
     private void MoveAction_OnStartMoving(object sender, System.EventArgs e)
     {
         animator.SetBool("isWalking", true);
+        animator.SetBool("isCovered", false);
     }
     private void MoveAction_OnStopMoving(object sender, System.EventArgs e)
     {
@@ -79,6 +87,64 @@ public class UnitAnimator : MonoBehaviour
         bulletProjectile.Setup(targetUnitShootAtPosition);
     }
 
+    private void UnitActionSystem_OnUnitSelectingTarget(object sender, UnitActionSystem.ShootSelectionEventArgs args)
+    {
+        Unit thisUnit = GetComponent<Unit>();
+        if (UnitActionSystem.Instance.GetSelectedUnit() != thisUnit) return;
+
+        if (args.isSelectingTarget)
+        {
+            animator.ResetTrigger("TakeCover");
+            animator.SetBool("isCovered", false);
+        }
+        else
+        {
+            thisUnit.UpdateCoverState();
+        }
+    }
+    private void SelectionNoShootUI_OnTargetSelectionCancel(object sender, System.EventArgs e)
+    {
+        Unit thisUnit = GetComponent<Unit>();
+        if (UnitActionSystem.Instance.GetSelectedUnit() != thisUnit) return;
+        thisUnit.ForceUpdateCoverState();
+    }
+
+    private void ShootAction_OnAnyShoot(object sender, ShootAction.OnShootEventArgs e)
+    {
+        Unit thisUnit = GetComponent<Unit>();
+        if (UnitActionSystem.Instance.GetSelectedUnit() != thisUnit) return;
+        thisUnit.ForceUpdateCoverState();
+    }
+    private void Unit_OnAnyCoverStateChanged(object sender, EventArgs e)
+    {
+        Unit unit = sender as Unit;
+        Vector3 coverDir = unit.GetCoverDirection();
+        if (unit != gameObject.GetComponent<Unit>()) return;
+
+        
+        if (unit.IsCovered())
+        {
+            
+            if (coverDir != Vector3.zero)
+            {
+                unit.transform.forward = -coverDir;
+                // unit.transform.position += coverDir * 1.1f;
+            }
+
+            animator.SetTrigger("TakingCover");
+            animator.SetBool("isCovered", true);
+        }
+        else
+        {
+            coverDir = unit.GetCoverDirection();
+            /*if (coverDir != Vector3.zero)
+            {
+                unit.transform.position -= coverDir * 1.1f;
+            }*/
+            animator.ResetTrigger("TakeCover");
+            animator.SetBool("isCovered", false);
+        }
+    }
     private void EquipSword()
     {
         swordTransform.gameObject.SetActive(true);
