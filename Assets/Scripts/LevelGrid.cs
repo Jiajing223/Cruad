@@ -153,4 +153,5 @@ public class LevelGrid : MonoBehaviour
     {
         return GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
     }
+    public float GetCellSize() { return cellSize; }
 }

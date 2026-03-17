@@ -7,10 +7,7 @@ using UnityEngine.InputSystem;
 
 public class UnitActionSystem : MonoBehaviour
 {
-    // Singleton pattern (Making the other classes cannot use the setter)
-    // Singleton instance
     public static UnitActionSystem Instance { get; private set; }
-    // Event: called when the selected unit changes
     public event EventHandler OnSelectedUnitChanged;
     public event EventHandler<ShootSelectionEventArgs> OnUnitSelectingTarget;
     public class ShootSelectionEventArgs : EventArgs
@@ -18,7 +15,6 @@ public class UnitActionSystem : MonoBehaviour
         public bool isSelectingTarget;
         public GridPosition targetGridPosition;
     }
-    // Event: called when the selected action changes
     public event EventHandler OnSelectedActionChanged;
 
     public event EventHandler<bool> OnBusyChanged;
@@ -31,7 +27,7 @@ public class UnitActionSystem : MonoBehaviour
     // LayerMask for raycasting units
     [SerializeField] private LayerMask unitLayerMask;
 
-    // Whether the system is busy (e.g. during an action animation)
+    // Whether the system is busy (during an action animation)
     private bool isBusy;
     private bool isSelectingTarget;
 

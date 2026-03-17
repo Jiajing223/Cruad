@@ -82,6 +82,7 @@ public class MoveAction : BaseAction
                 // Reached final position
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
                 unit.UpdateCoverState();
+                FogOfWarManager.Instance?.RefreshVisibility();
                 ActionComplete();
                 return;
             }
