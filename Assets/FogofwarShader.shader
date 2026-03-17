@@ -15,7 +15,7 @@ Shader "Custom/FogOfWar"
 
         Blend SrcAlpha OneMinusSrcAlpha
         ZWrite Off
-        ZTest Always        // Always draws on top
+        ZTest LEqual       
         Cull Off
 
         Pass

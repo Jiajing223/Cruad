@@ -4,11 +4,11 @@ using UnityEngine;
 using Cinemachine;
 public class CameraController : MonoBehaviour
 {
-    [SerializeField] private CinemachineVirtualCamera cinemachineVirtualCamera;
-    private const float MIN_FOLLOW_OFFSET = 2f;
-    private const float MAX_FOLLOW_OFFSET = 15f;
-
     public static CameraController Instance { get; private set;}
+    [SerializeField] private CinemachineVirtualCamera cinemachineVirtualCamera;
+    private const float MIN_FOLLOW_OFFSET = 6f;
+    private const float MAX_FOLLOW_OFFSET = 12f;
+
     private Vector3 targetFollowOffset;
     private CinemachineTransposer cinemachineTransposer;
 

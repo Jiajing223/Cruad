@@ -1,3 +1,4 @@
+// FogOfWarManager.cs
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,113 +8,111 @@ public class FogOfWarManager : MonoBehaviour
     public static FogOfWarManager Instance { get; private set; }
 
     [SerializeField] private int sightRange = 8;
-    [SerializeField] private LayerMask sightBlockLayerMask; // walls, obstacles
-
-    // Tracks which grid positions are currently visible this turn
+    [SerializeField] private LayerMask sightBlockLayerMask;
     private HashSet<GridPosition> visiblePositions = new HashSet<GridPosition>();
-    // Tracks which positions have EVER been seen (this turn or any previous turn)
     private HashSet<GridPosition> exploredPositions = new HashSet<GridPosition>();
+    private int floorCount;
 
     private void Awake()
     {
         if (Instance != null) { Destroy(gameObject); return; }
         Instance = this;
+        floorCount = LevelGrid.Instance.GetFloorCount();
     }
 
     private void Start()
     {
         TurnSystem.Instance.OnTurnChanged += OnTurnChanged;
         Unit.OnAnyUnitSpawned += OnUnitChanged;
-        Unit.OnAnyUnitDead   += OnUnitChanged;
+        Unit.OnAnyUnitDead += OnUnitChanged;
         StartCoroutine(StartDelayedFogRefresh());
     }
+    // Wait one frame to ensure all units are spawned before the first fog refresh, so that the fog can be correctly initialized based on unit positions
     private IEnumerator StartDelayedFogRefresh()
     {
-        yield return null; // Wait one frame to ensure all units are initialized
-        RefreshVisibility();
-    }
-    private void OnTurnChanged(object sender, System.EventArgs e)
-    {
+        yield return null;
         RefreshVisibility();
     }
 
-    private void OnUnitChanged(object sender, System.EventArgs e)
-    {
-        RefreshVisibility();
-    }
+    private void OnTurnChanged(object sender, System.EventArgs e) => RefreshVisibility();
+    private void OnUnitChanged(object sender, System.EventArgs e) => RefreshVisibility();
 
     public void RefreshVisibility()
     {
-        if (FogofwarVisual.Instance == null || !FogofwarVisual.Instance.IsReady)
-            return;
-
-        if (UnitManager.Instance == null)
-            return;
+        if (FogofwarVisual.Instance == null || !FogofwarVisual.Instance.IsReady) return;
+        if (UnitManager.Instance == null) return;
 
         List<Unit> friendlyUnits = UnitManager.Instance.GetFriendlyUnitList();
-        if (friendlyUnits.Count == 0)
-            return;
-
-        Debug.Log("Units: " + UnitManager.Instance.GetFriendlyUnitList().Count);
+        if (friendlyUnits.Count == 0) return;
+        // Clear visible positions but not explored positions, so explored positions will stay on the map until the end of the game
         visiblePositions.Clear();
 
         foreach (Unit unit in friendlyUnits)
-        {
             ComputeVisibilityForUnit(unit);
-        }
 
         foreach (GridPosition gp in visiblePositions)
             exploredPositions.Add(gp);
 
         FogofwarVisual.Instance?.UpdateFogVisual(visiblePositions, exploredPositions);
-        
         UpdateEnemyVisibility();
     }
 
     private void ComputeVisibilityForUnit(Unit unit)
     {
         GridPosition unitPos = unit.GetGridPosition();
-        Vector3 unitWorld   = LevelGrid.Instance.GetWorldPosition(unitPos) + Vector3.up * 1.0f;
+        Vector3 unitWorld = LevelGrid.Instance.GetWorldPosition(unitPos) + Vector3.up * 1.0f;
 
+        // Fill the list of grid that should not be blocked by fog of war AKA the grids that are visible by all the friendly units
         for (int x = -sightRange; x <= sightRange; x++)
         {
             for (int z = -sightRange; z <= sightRange; z++)
             {
-                // Circular range check
+                // Skip tiles outside the circular radius
                 if (x * x + z * z > sightRange * sightRange) continue;
 
-                GridPosition testPos = new GridPosition(
-                    unitPos.x + x,
-                    unitPos.z + z,
-                    unitPos.floor
-                );
+                // Check the same (x,z) column across every floor independently
+                for (int f = 0; f < floorCount; f++)
+                {
+                    GridPosition testPos = new GridPosition(
+                        unitPos.x + x,
+                        unitPos.z + z,
+                        f
+                    );
+                    // Not valid position
+                    if (!LevelGrid.Instance.IsValidGridPosition(testPos)) continue;
 
-                if (!LevelGrid.Instance.IsValidGridPosition(testPos)) continue;
+                    Vector3 testWorld = LevelGrid.Instance.GetWorldPosition(testPos)
+                                      + Vector3.up * 0.05f;
+                    Vector3 dir = testWorld - unitWorld;
+                    float dist = dir.magnitude;
 
-                Vector3 testWorld = LevelGrid.Instance.GetWorldPosition(testPos) + Vector3.up * 1.0f;
-                Vector3 dir       = (testWorld - unitWorld);
-                float   dist      = dir.magnitude;
+                    // Blocked by obstacle
+                    if (Physics.Raycast(unitWorld, dir.normalized, dist, sightBlockLayerMask))
+                        continue;
 
-                if (Physics.Raycast(unitWorld, dir.normalized, dist, sightBlockLayerMask))
-                    continue; 
-
-                visiblePositions.Add(testPos);
+                    visiblePositions.Add(testPos);
+                }
             }
         }
     }
 
     private void UpdateEnemyVisibility()
     {
+        // Show enemy units if they are in visible positions, hide them otherwise
         foreach (Unit enemy in UnitManager.Instance.GetEnemyUnitList())
         {
-            GridPosition enemyPos = enemy.GetGridPosition();
-            bool visible = visiblePositions.Contains(enemyPos);
-            // Toggle all renderers on the enemy
+            bool visible = visiblePositions.Contains(enemy.GetGridPosition());
             foreach (Renderer r in enemy.GetComponentsInChildren<Renderer>())
+            {
+                if (r.GetComponent<UnitSelectVisual>() != null) continue;
                 r.enabled = visible;
+            }
+            foreach (Canvas c in enemy.GetComponentsInChildren<Canvas>())
+                c.enabled = visible;
         }
     }
 
-    public bool IsVisible(GridPosition gridPosition)  => visiblePositions.Contains(gridPosition);
+    public bool IsVisible(GridPosition gridPosition) => visiblePositions.Contains(gridPosition);
     public bool IsExplored(GridPosition gridPosition) => exploredPositions.Contains(gridPosition);
+    public LayerMask SightBlockLayerMask => sightBlockLayerMask;
 }

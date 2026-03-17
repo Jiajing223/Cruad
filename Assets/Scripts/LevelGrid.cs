@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -154,4 +155,9 @@ public class LevelGrid : MonoBehaviour
         return GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
     }
     public float GetCellSize() { return cellSize; }
+
+    public int GetFloorCount()
+    {
+        return floorAmount;
+    }
 }
