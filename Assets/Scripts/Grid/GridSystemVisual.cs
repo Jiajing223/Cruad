@@ -17,13 +17,17 @@ public class GridSystemVisual : MonoBehaviour
         public GridVisualType gridVisualType;
         public Material material;
     }
+
+    private GridPosition lastHoverGridPosition;
+    private bool wasBusy;
     public enum GridVisualType
     {
         White,
         Blue,
         Red,
         RedSoft,
-        Yellow
+        Yellow,
+        Hover
     }
 
     [SerializeField] private List<GridVisualTypeMaterial> gridVisualTypeMaterialList;
@@ -64,7 +68,32 @@ public class GridSystemVisual : MonoBehaviour
         
         StartCoroutine(DelayedUpdate());
     }
+    private void Update()
+    {
+        if (!TurnSystem.Instance.IsPlayerTurn()) return;
 
+        Vector3 mouseWorldPosition = MouseWorld.GetPositionOnlyHitVisible();
+        if (mouseWorldPosition == Vector3.zero) return;
+        // Get current mouse grid position
+        GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(mouseWorldPosition);
+        
+
+        // Only redraw if mouse moved to a different tile
+        if (mouseGridPosition == lastHoverGridPosition) return;
+        lastHoverGridPosition = mouseGridPosition;
+
+        UpdateGridVisual();
+
+        BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();
+        if (selectedAction.isValidActionGridPosition(mouseGridPosition))
+        {
+            gridSystemVisualSingleArray[
+                mouseGridPosition.x,
+                mouseGridPosition.z,
+                mouseGridPosition.floor
+            ].Show(GetGridVisualTypeMaterial(GridVisualType.Hover));
+        }
+    }
     private void UnitActionSystem_OnBusyChanged(object sender, bool e)
     {
         UpdateGridVisual();
@@ -85,10 +114,7 @@ public class GridSystemVisual : MonoBehaviour
     {
         UpdateGridVisual();
     }
-    private void Update()
-    {
-        
-    }
+
     public void HideAllGridPosition()
     {
         for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
