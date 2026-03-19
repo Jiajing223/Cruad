@@ -120,9 +120,18 @@ public abstract class BaseAction : MonoBehaviour
         }
         
         // Flanking bonus
-        if (Physics.Raycast(attackerWorld, shootDir, out RaycastHit hit, distance, coverLayerMask))
+        Vector3 targetToAttacker = (attackerWorld - targetWorld).normalized;
+        // Snap to nearest cardinal direction (4-directional cover only)
+        Vector3 cardinalDir;
+        if (Mathf.Abs(targetToAttacker.x) >= Mathf.Abs(targetToAttacker.z))
+            cardinalDir = new Vector3(Mathf.Sign(targetToAttacker.x), 0, 0);
+        else
+            cardinalDir = new Vector3(0, 0, Mathf.Sign(targetToAttacker.z));
+
+        float coverCheckDistance = 1.2f;
+        if (Physics.Raycast(targetWorld, cardinalDir, out RaycastHit coverHit, coverCheckDistance, coverLayerMask))
         {
-            if (hit.collider.TryGetComponent<CoverObject>(out CoverObject cover))
+            if (coverHit.collider.TryGetComponent<CoverObject>(out CoverObject cover))
             {
                 hitChance -= cover.GetDodgeBonus() / 100f;
             }
