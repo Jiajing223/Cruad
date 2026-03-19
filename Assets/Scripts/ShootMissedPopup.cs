@@ -6,7 +6,7 @@ public class ShootMissedPopup : MonoBehaviour
 {
     [SerializeField] private TextMeshPro missText;
     private float floatSpeed = 2f;
-    private float fadeSpeed  = 2f;
+    // private float fadeSpeed  = 2f;
     private float lifetime   = 1f;
     private float timer;
     private void Update()

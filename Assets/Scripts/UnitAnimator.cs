@@ -94,12 +94,12 @@ public class UnitAnimator : MonoBehaviour
 
         if (args.isSelectingTarget)
         {
-            animator.ResetTrigger("TakeCover");
+            animator.ResetTrigger("TakingCover");
             animator.SetBool("isCovered", false);
         }
         else
         {
-            thisUnit.UpdateCoverState();
+            thisUnit.ForceUpdateCoverState();
         }
     }
     private void SelectionNoShootUI_OnTargetSelectionCancel(object sender, System.EventArgs e)
@@ -141,7 +141,7 @@ public class UnitAnimator : MonoBehaviour
             {
                 unit.transform.position -= coverDir * 1.1f;
             }*/
-            animator.ResetTrigger("TakeCover");
+            animator.ResetTrigger("TakingCover");
             animator.SetBool("isCovered", false);
         }
     }
