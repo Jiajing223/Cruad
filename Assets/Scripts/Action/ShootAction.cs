@@ -4,8 +4,6 @@ using UnityEngine;
 using System;
 public class ShootAction : BaseAction
 {
-    [SerializeField] private ShootHitPopup hitTextPopupPrefab;
-    [SerializeField] private ShootMissedPopup missTextPopupPrefab;
     private enum State
     {
         Aiming,
@@ -234,14 +232,11 @@ public class ShootAction : BaseAction
         {
             int damage = targetUnit.GetComponent<HealthSystem>().GetCalculatedDamage(unit, targetUnit);
             targetUnit.Damage(unit, targetUnit);
-
-            Vector3 spawnPos = targetUnit.GetWorldPosition() + Vector3.up * 2f;
-            ShootHitPopup popup = Instantiate(hitTextPopupPrefab, spawnPos, Quaternion.identity);
-            popup.Setup(damage);
-        } else
+            DamagePopUpManager.Instance.ShowDamage(targetUnit.GetWorldPosition(), damage);
+        }
+        else
         {
-            Vector3 spawnPos = targetUnit.GetWorldPosition() + Vector3.up * 2f;
-            Instantiate(missTextPopupPrefab, spawnPos, Quaternion.identity);
+            DamagePopUpManager.Instance.ShowMiss(targetUnit.GetWorldPosition());
         }
     }
 

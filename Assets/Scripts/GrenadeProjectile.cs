@@ -6,15 +6,15 @@ public class GrenadeProjectile : MonoBehaviour
 {
     [SerializeField] private Transform grenadeExplosionVfxPrefab; 
     [SerializeField] private TrailRenderer trailRenderer;          
-    [SerializeField] private AnimationCurve arcYAnimationCurve;    // 控制手榴弹投掷弧线的Y轴动画曲线
+    [SerializeField] private AnimationCurve arcYAnimationCurve;    
 
-    // 静态事件：当任意手榴弹爆炸时触发
     public static event EventHandler OnAnyGrenadeExploded;
 
     private Vector3 targetPosition;          
     private Action OnGrenadeBehaviourComplete; 
     private float totalDistance;  
     private Vector3 positionXZ;   // 手榴弹在XZ平面上的位置（忽略Y轴）
+    private int grenadeDamage = 30;
 
     private void Update()
     {
@@ -48,17 +48,19 @@ public class GrenadeProjectile : MonoBehaviour
                 // Deal dmg
                 if (collider.TryGetComponent<Unit>(out Unit targetUnit))
                 {
-                    targetUnit.Damage(targetUnit, 30);
+                    targetUnit.Damage(targetUnit, grenadeDamage);
+                    DamagePopUpManager.Instance.ShowDamage(targetUnit.GetWorldPosition(), grenadeDamage);
                 }
 
                 // Destroy destructable
                 if (collider.TryGetComponent<DestructableCrate>(out DestructableCrate destructableCrate))
                 {
+                    DamagePopUpManager.Instance.ShowText(destructableCrate.transform.position, "Broken!");
                     destructableCrate.Damage();
                 }
             }
 
-            // 触发手榴弹爆炸事件
+            // Trigger explosion event, spawn vfx, destroy grenade
             OnAnyGrenadeExploded?.Invoke(this, EventArgs.Empty);
             trailRenderer.transform.parent = null;
             Instantiate(grenadeExplosionVfxPrefab, targetPosition + Vector3.up * 1f, Quaternion.identity);
@@ -69,21 +71,14 @@ public class GrenadeProjectile : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 初始化手榴弹参数
-    /// </summary>
-    /// <param name="targetGridPosition">目标网格位置</param>
-    /// <param name="OnGrenadeBehaviourComplete">行为完成回调</param>
     public void Setup(GridPosition targetGridPosition, Action OnGrenadeBehaviourComplete)
     {
         this.OnGrenadeBehaviourComplete = OnGrenadeBehaviourComplete;
-        // 将网格位置转换为世界坐标
+        // Convert grid position to world position
         targetPosition = LevelGrid.Instance.GetWorldPosition(targetGridPosition);
 
-        // 初始化XZ平面位置（忽略初始高度）
         positionXZ = transform.position;
         positionXZ.y = 0;
-        // 计算总移动距离
         totalDistance = Vector3.Distance(positionXZ, targetPosition);
     }
 }

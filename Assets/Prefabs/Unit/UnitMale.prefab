@@ -1313,8 +1313,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8143ed510d2a884ca556246b85178ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hitTextPopupPrefab: {fileID: 7133544746814532165, guid: 33095362410cbbd419279bc186d7ae51, type: 3}
-  missTextPopupPrefab: {fileID: 8736219302462207268, guid: d6ef54b39c835a34c872c4ce0944a41b, type: 3}
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 320
