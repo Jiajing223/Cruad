@@ -17,10 +17,10 @@ public class ObjectiveManager : MonoBehaviour
     private void Unit_OnAnyUnitDead(object sender, EventArgs e)
     {
         enemyUnitList = UnitManager.Instance.GetEnemyUnitList();
-
-        if (enemyUnitList.Count == 0)
+        Debug.Log(enemyUnitList.Count);
+        if (enemyUnitList.Count <= 0)
         {
-            SceneManager.LoadScene("GameScene");
+            SceneManager.LoadScene("GameScene1");
         }
     }
 }

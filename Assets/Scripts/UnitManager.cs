@@ -53,7 +53,9 @@ public class UnitManager : MonoBehaviour
         unitList.Add(unit);
         if (unit.IsEnemy())
         {
+            
             enemyUnitList.Add(unit);
+            Debug.Log(enemyUnitList.Count);
         }
         else
         {

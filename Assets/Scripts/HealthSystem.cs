@@ -37,10 +37,7 @@ public class HealthSystem : MonoBehaviour
             finalDamage = Mathf.RoundToInt(
                 (float)(damage * damage) / (damage + targetDefense)
             );
-            int critChance = userUnit.GetUnitStat().GetCriticalChance();
-            bool isCrit = UnityEngine.Random.Range(0, 100) < critChance;
-            if (isCrit)
-                finalDamage = Mathf.RoundToInt(finalDamage * 1.5f);
+            
         }
         else // stat based damage
         {
@@ -50,6 +47,10 @@ public class HealthSystem : MonoBehaviour
             finalDamage = Mathf.RoundToInt(
                 (float)(userAttack * userAttack) / (userAttack + targetDefense)
             );
+            int critChance = userUnit.GetUnitStat().GetCriticalChance();
+            bool isCrit = UnityEngine.Random.Range(0, 100) < critChance;
+            if (isCrit)
+                finalDamage = Mathf.RoundToInt(finalDamage * 1.5f);
         }
         
         return finalDamage;
