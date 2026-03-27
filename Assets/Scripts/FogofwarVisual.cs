@@ -170,7 +170,7 @@ public class FogofwarVisual : MonoBehaviour
     }
 
     // Update the fog visual based on the visible and explored positions
-    public void UpdateFogVisual(HashSet<GridPosition> visible, HashSet<GridPosition> explored)
+    public void UpdateFogVisual(HashSet<GridPosition> visible)
     {
         for (int f = 0; f < floorCount; f++)
         {
@@ -190,7 +190,7 @@ public class FogofwarVisual : MonoBehaviour
 
                     // Fog changes by changing color of the grids
                     if (obstacleMap[cellIndex])
-                        c = visible.Contains(gp) ? visibleColor : hiddenColor;
+                        c = visibleColor;
                     else if (visible.Contains(gp)) c = visibleColor;
                     else c = hiddenColor;
 

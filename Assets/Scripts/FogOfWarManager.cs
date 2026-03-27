@@ -10,7 +10,6 @@ public class FogOfWarManager : MonoBehaviour
     [SerializeField] private int sightRange = 8;
     [SerializeField] private LayerMask sightBlockLayerMask;
     private HashSet<GridPosition> visiblePositions = new HashSet<GridPosition>();
-    private HashSet<GridPosition> exploredPositions = new HashSet<GridPosition>();
     private int floorCount;
 
     private void Awake()
@@ -44,16 +43,13 @@ public class FogOfWarManager : MonoBehaviour
 
         List<Unit> friendlyUnits = UnitManager.Instance.GetFriendlyUnitList();
         if (friendlyUnits.Count == 0) return;
-        // Clear visible positions but not explored positions, so explored positions will stay on the map until the end of the game
+
         visiblePositions.Clear();
 
         foreach (Unit unit in friendlyUnits)
             ComputeVisibilityForUnit(unit);
 
-        foreach (GridPosition gp in visiblePositions)
-            exploredPositions.Add(gp);
-
-        FogofwarVisual.Instance?.UpdateFogVisual(visiblePositions, exploredPositions);
+        FogofwarVisual.Instance?.UpdateFogVisual(visiblePositions);
         UpdateEnemyVisibility();
     }
 
@@ -113,6 +109,5 @@ public class FogOfWarManager : MonoBehaviour
     }
 
     public bool IsVisible(GridPosition gridPosition) => visiblePositions.Contains(gridPosition);
-    public bool IsExplored(GridPosition gridPosition) => exploredPositions.Contains(gridPosition);
     public LayerMask SightBlockLayerMask => sightBlockLayerMask;
 }

@@ -20,7 +20,6 @@ public class InteractAction : BaseAction
         IInteractable interactable = LevelGrid.Instance.GetInteractableAtGridPosition(gridPosition);
 
         interactable.Interact(OnInteractComplete);
-
         ActionStart(onActionComplete);
     }
     public override string GetActionName()
@@ -70,6 +69,7 @@ public class InteractAction : BaseAction
 
     private void OnInteractComplete()
     {
+        FogOfWarManager.Instance.RefreshVisibility();
         ActionComplete();
     }
 }

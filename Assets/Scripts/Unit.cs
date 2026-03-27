@@ -33,7 +33,7 @@ public class Unit : MonoBehaviour
     private SpinAction spinAction;
     private ShootAction shootAction;
     private BaseAction[] baseActionArray;
-    private const int totalActionPoints = 5;
+    private const int totalActionPoints = 3;
     private int actionPoints = totalActionPoints;
     private bool isCovered;
     private void Awake()

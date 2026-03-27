@@ -91,6 +91,7 @@ public class UnitActionSystem : MonoBehaviour
         }
 
         HandleSelectedAction();
+        UpdateThrustDirection();
     }
     // Handles execution logic for the currently selected action
     private void HandleSelectedAction()
@@ -200,6 +201,26 @@ public class UnitActionSystem : MonoBehaviour
             isSelectingTarget = true, 
             targetGridPosition = mouseGridPosition 
         });
+    }
+
+    private void UpdateThrustDirection()
+    {
+        if (selectedAction is not ThrustAction thrustAction) return;
+
+        GridPosition unitGrid = selectedUnit.GetGridPosition();
+        Vector3 unitWorld = LevelGrid.Instance.GetWorldPosition(unitGrid);
+        Vector3 mouseWorld = MouseWorld.GetPositionOnlyHitVisible();
+
+        Vector3 delta = mouseWorld - unitWorld;
+        delta.y = 0f;
+
+        GridPosition dir;
+        if (Mathf.Abs(delta.x) >= Mathf.Abs(delta.z))
+            dir = new GridPosition(delta.x > 0 ? 1 : -1, 0, 0);
+        else
+            dir = new GridPosition(0, delta.z > 0 ? 1 : -1, 0);
+
+        thrustAction.SetMouseDirection(dir);
     }
 
     private void UnitActionSystem_OnTargetSelectionConfirm(object sender, EventArgs e)

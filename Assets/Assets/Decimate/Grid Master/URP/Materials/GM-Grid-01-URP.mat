@@ -83,7 +83,7 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _Smoothness: 0
-    - _Tiling: 1
+    - _Tiling: 0.5
     m_Colors:
     - _Dirt_Color: {r: 0.18117811, g: 0.10346209, b: 0.23584908, a: 0}
     - _Emission_Color: {r: 0, g: 0, b: 0, a: 0}

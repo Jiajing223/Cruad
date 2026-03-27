@@ -232,9 +232,12 @@ public class GridSystemVisual : MonoBehaviour
                 break;
             case SwordAction swordAction:
                 gridVisualType = GridVisualType.Red;
-
+            
                 ShowGridPositionRangeSquare(selectedUnit.GetGridPosition(), swordAction.GetMaxSwordDistance(), GridVisualType.RedSoft);
                 break;  
+            case ThrustAction thrustAction:
+                gridVisualType = GridVisualType.Red;
+                break;
         }
         
         ShowGridPositionList(
@@ -250,7 +253,6 @@ public class GridSystemVisual : MonoBehaviour
                 return gridVisualTypeMaterial.material;
             }
         }
-        Debug.LogError("Could not find GridVisualTypeMaterial");
         return null;
     }
 }
