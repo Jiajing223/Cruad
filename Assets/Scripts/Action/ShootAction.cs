@@ -230,8 +230,7 @@ public class ShootAction : BaseAction
         });
         if (isHit)
         {
-            int damage = targetUnit.GetComponent<HealthSystem>().GetCalculatedDamage(unit, targetUnit);
-            targetUnit.Damage(unit, targetUnit);
+            int damage = targetUnit.GetComponent<HealthSystem>().Damage(unit, targetUnit);
             DamagePopUpManager.Instance.ShowDamage(targetUnit.GetWorldPosition(), damage);
         }
         else

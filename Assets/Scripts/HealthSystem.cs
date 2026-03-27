@@ -16,13 +16,14 @@ public class HealthSystem : MonoBehaviour
     {
         healthMax = health;
     }
-    public void Damage(Unit userUnit = null ,Unit targetUnit = null , int damage = 0)
+    public int Damage(Unit userUnit = null ,Unit targetUnit = null , int damage = 0)
     {
         int finalDamage = calculateDamage(userUnit, targetUnit, damage);
         health -= finalDamage;
         if (health < 0) health = 0;
         OnDamaged?.Invoke(this, EventArgs.Empty);
         if (health == 0) Die();
+        return finalDamage;
     }
     
     private int calculateDamage(Unit userUnit = null,Unit targetUnit = null, int damage = 0)
@@ -36,6 +37,10 @@ public class HealthSystem : MonoBehaviour
             finalDamage = Mathf.RoundToInt(
                 (float)(damage * damage) / (damage + targetDefense)
             );
+            int critChance = userUnit.GetUnitStat().GetCriticalChance();
+            bool isCrit = UnityEngine.Random.Range(0, 100) < critChance;
+            if (isCrit)
+                finalDamage = Mathf.RoundToInt(finalDamage * 1.5f);
         }
         else // stat based damage
         {
@@ -46,6 +51,7 @@ public class HealthSystem : MonoBehaviour
                 (float)(userAttack * userAttack) / (userAttack + targetDefense)
             );
         }
+        
         return finalDamage;
     }
     private void Die()

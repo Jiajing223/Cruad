@@ -53,8 +53,7 @@ public class SwordAction : BaseAction
                 state = State.SwingingSwordAfterHit;
                 float afterHitStateTime = 0.6f;
                 stateTimer = afterHitStateTime;
-                int damage = targetUnit.GetComponent<HealthSystem>().GetCalculatedDamage(unit, targetUnit);
-                targetUnit.Damage(unit, targetUnit);
+                int damage = targetUnit.GetComponent<HealthSystem>().Damage(unit, targetUnit);
                 DamagePopUpManager.Instance.ShowDamage(targetUnit.GetWorldPosition(), damage);
                 OnAnySwordHit?.Invoke(this, EventArgs.Empty);
                 break;

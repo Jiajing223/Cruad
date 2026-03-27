@@ -54,12 +54,11 @@ public class ThrustAction : BaseAction
                 state = State.SwingingSwordAfterHit;
                 stateTimer = 0.6f;
 
-                foreach (Unit target in targetUnits)
+                foreach (Unit targetUnit in targetUnits)
                 {
-                    int damage = target.GetComponent<HealthSystem>().GetCalculatedDamage(unit, target);
-                    target.Damage(unit, target);
-                    target.GetComponent<UnitStat>().ApplyDefenseModifier(-5, 2);
-                    DamagePopUpManager.Instance.ShowDamage(target.GetWorldPosition(), damage);
+                    int damage = targetUnit.GetComponent<HealthSystem>().Damage(unit, targetUnit);
+                    DamagePopUpManager.Instance.ShowDamage(targetUnit.GetWorldPosition(), damage);
+                    targetUnit.GetComponent<UnitStat>().ApplyDefenseModifier(-5, 2);
                     OnAnyThrustHit?.Invoke(this, EventArgs.Empty);
                 }
                 break;
