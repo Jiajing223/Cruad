@@ -33,6 +33,7 @@ public class Unit : MonoBehaviour
     private SpinAction spinAction;
     private ShootAction shootAction;
     private BaseAction[] baseActionArray;
+    private IAbility[] abilities;
     private const int totalActionPoints = 3;
     private int actionPoints = totalActionPoints;
     private bool isCovered;
@@ -44,6 +45,7 @@ public class Unit : MonoBehaviour
         spinAction = GetComponent<SpinAction>();
         shootAction = GetComponent<ShootAction>();
         baseActionArray = GetComponents<BaseAction>();
+        abilities = GetComponents<IAbility>();
     }
     private void Start()
     {
@@ -100,6 +102,16 @@ public class Unit : MonoBehaviour
     public bool IsEnemy()
     {
         return isEnemy;
+    }
+    public List<BaseAction> GetAbilities()
+    {
+        List<BaseAction> abilities = new List<BaseAction>();
+        foreach (BaseAction action in baseActionArray)
+        {
+            if (action is IAbility)
+                abilities.Add(action);
+        }
+        return abilities;
     }
     public Vector3 GetWorldPosition()
     {

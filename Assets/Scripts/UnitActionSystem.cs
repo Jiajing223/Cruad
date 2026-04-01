@@ -16,7 +16,7 @@ public class UnitActionSystem : MonoBehaviour
         public GridPosition targetGridPosition;
     }
     public event EventHandler OnSelectedActionChanged;
-
+    public event EventHandler<BaseAction> OnAblityActionSelected;
     public event EventHandler<bool> OnBusyChanged;
 
     public event EventHandler OnActionStarted;
@@ -134,7 +134,7 @@ public class UnitActionSystem : MonoBehaviour
 
             if (selectedAction.isValidActionGridPosition(mouseGridPosition))
             {
-                if (selectedAction.GetActionName() == "Shoot")
+                if (selectedAction.GetActionName() == "Shoot" || selectedAction.GetActionName() == "Fireball")
                 {
                     HandleShootSelection(mouseGridPosition);
                 } 
@@ -233,7 +233,6 @@ public class UnitActionSystem : MonoBehaviour
         }
         else
         {
-            // Not enough action points, close the UI 
             UnitActionSystem_OnTargetSelectionCancel(sender, e);
             return;
         }
@@ -282,6 +281,11 @@ public class UnitActionSystem : MonoBehaviour
     {
         selectedAction = baseAction;
         OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
+        if (baseAction.GetActionName() == "Ability")
+        {
+            OnAblityActionSelected?.Invoke(this, baseAction);
+            Debug.Log("Selected ability: " + baseAction.GetActionName());
+        }
     }
     // Get the currently selected action
     public BaseAction GetSelectedAction()

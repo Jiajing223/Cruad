@@ -139,4 +139,15 @@ public abstract class BaseAction : MonoBehaviour
         return Mathf.Clamp01(hitChance);
     }
     public abstract EnemyAIAction GetBestEnemyAIAction(GridPosition gridPosition);
+
+    public virtual int GetDamagePreview(Unit attacker, Unit target)
+    {
+        return target.GetComponent<HealthSystem>()
+            .GetCalculatedDamage(attacker, target);
+    }
+
+    public virtual float? GetHitChancePreview(GridPosition shooterGrid, Unit target)
+    {
+        return null;
+    }
 }

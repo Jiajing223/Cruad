@@ -130,7 +130,7 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
 
-    private void ShowGridPositionRange(GridPosition gridPosition, int range, GridVisualType gridVisualType, ShootAction shootAction = null)
+    private void ShowGridPositionRange(GridPosition gridPosition,int range,GridVisualType gridVisualType,LayerMask obstacleLayerMask)
     {
         List<GridPosition> gridPositionList = new List<GridPosition>();
         Vector3 unitWorldPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
@@ -157,7 +157,7 @@ public class GridSystemVisual : MonoBehaviour
                         unitWorldPosition + Vector3.up * unitShoulderHeight,
                         shootDir,
                         distance,
-                        shootAction.GetObstacleLayerMask())) continue;
+                        obstacleLayerMask)) continue;
 
                     gridPositionList.Add(testGridPosition);
                 }
@@ -222,7 +222,7 @@ public class GridSystemVisual : MonoBehaviour
             case ShootAction shootAction:
                 gridVisualType = GridVisualType.Red;
 
-                ShowGridPositionRange(selectedUnit.GetGridPosition(), shootAction.GetMaxShootDistance(), GridVisualType.RedSoft, shootAction);
+                ShowGridPositionRange(selectedUnit.GetGridPosition(), shootAction.GetMaxShootDistance(), GridVisualType.RedSoft, shootAction.GetObstacleLayerMask());
                 break; 
             case GrenadeAction grenadeAction:
                 gridVisualType = GridVisualType.Yellow;
@@ -237,6 +237,16 @@ public class GridSystemVisual : MonoBehaviour
                 break;  
             case ThrustAction thrustAction:
                 gridVisualType = GridVisualType.Red;
+                break;
+            case FireBallAction fireBallAction:
+                gridVisualType = GridVisualType.Red;
+
+                ShowGridPositionRange(
+                    selectedUnit.GetGridPosition(),
+                    fireBallAction.GetMaxRange(),
+                    GridVisualType.RedSoft,
+                    fireBallAction.GetObstacleLayerMask()
+                );
                 break;
         }
         

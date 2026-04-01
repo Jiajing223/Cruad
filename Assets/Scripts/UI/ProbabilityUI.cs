@@ -18,24 +18,25 @@ public class ProbabilityUI : MonoBehaviour
 
     private void UnitActionSystem_OnUnitSelectingTarget(object sender, UnitActionSystem.ShootSelectionEventArgs args)
     {
-        if (!args.isSelectingTarget)
+        BaseAction action = UnitActionSystem.Instance.GetSelectedAction();
+        Unit shooter = UnitActionSystem.Instance.GetSelectedUnit();
+        Unit target = LevelGrid.Instance.GetUnitOnGridPosition(args.targetGridPosition);
+
+        if (target == null) return;
+
+        float? hitChance = action.GetHitChancePreview(shooter.GetGridPosition(), target);
+
+        if (hitChance == null)
         {
             gameObject.SetActive(false);
             return;
         }
 
-        ShootAction shootAction = UnitActionSystem.Instance.GetSelectedAction() as ShootAction;
-        if (shootAction == null) return;
+        float value = hitChance.Value;
 
-        Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(args.targetGridPosition);
-        if (targetUnit == null) return;
-
-        GridPosition shooterGrid = UnitActionSystem.Instance.GetSelectedUnit().GetGridPosition();
-        float hitChance = shootAction.GetHitChance(shooterGrid, targetUnit);
-
-        probabilityText.text = $"Hit Chance: {Mathf.RoundToInt(hitChance * 100f)}%";
-        probabilityText.color = hitChance >= 0.8f ? highChanceColor 
-                            : hitChance >= 0.7f ? mediumChanceColor 
+        probabilityText.text = $"Hit Chance: {Mathf.RoundToInt(value * 100f)}%";
+        probabilityText.color = value >= 0.8f ? highChanceColor 
+                            : value >= 0.7f ? mediumChanceColor 
                             : lowChanceColor;
 
         gameObject.SetActive(true);

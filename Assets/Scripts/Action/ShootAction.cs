@@ -41,6 +41,10 @@ public class ShootAction : BaseAction
     {
         return "Shoot";
     }
+    public override float? GetHitChancePreview(GridPosition shooterGrid, Unit target)
+    {
+        return GetHitChance(shooterGrid, target);
+    }
     public float GetHitChance(GridPosition shooterGridPosition, Unit target)
     {
         return GetHitChance(shooterGridPosition, target, baseHitChance);
@@ -146,9 +150,7 @@ public class ShootAction : BaseAction
         {
             case State.Aiming:
                 Vector3 aimDirection = (targetUnit.GetWorldPosition() - unit.GetWorldPosition()).normalized;
-
-                aimDirection.y = 0f;
-                transform.forward = Vector3.Slerp(transform.forward, aimDirection, Time.deltaTime * rotateSpeed);
+                PointAtTarget(aimDirection);
                 break;
             case State.Shooting:
 
@@ -235,6 +237,15 @@ public class ShootAction : BaseAction
         }
         else
         {
+            Vector3 targetPos = targetUnit.GetWorldPosition();
+            float missRadius = 1.5f;
+            Vector3 randomOffset = new Vector3(
+                UnityEngine.Random.Range(-missRadius, missRadius),
+                UnityEngine.Random.Range(-missRadius, missRadius),
+                UnityEngine.Random.Range(-missRadius, missRadius)
+            );
+            Vector3 aimDirection = ((targetPos + randomOffset) - unit.GetWorldPosition()).normalized;
+            PointAtTarget(aimDirection);
             DamagePopUpManager.Instance.ShowMiss(targetUnit.GetWorldPosition());
         }
     }
@@ -268,5 +279,11 @@ public class ShootAction : BaseAction
     public LayerMask GetObstacleLayerMask()
     {
         return obstaclesLayerMask;
+    }
+
+    private void PointAtTarget(Vector3 aimDirection)
+    {
+        aimDirection.y = 0f;
+        transform.forward = Vector3.Slerp(transform.forward, aimDirection, Time.deltaTime * rotateSpeed);
     }
 }

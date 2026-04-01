@@ -52,6 +52,9 @@ public class CameraManager : MonoBehaviour
             case SwordAction swordAction:
                 SetupActionCamera(swordAction.GetUnit(), swordAction.GetTargetUnit(), sideOffset: 0.7f, backwardOffset: 1.2f);
                 break;
+            case FireBallAction fireBallAction:
+                SetupActionCamera(fireBallAction.GetUnit(), fireBallAction.GetTargetUnit(), sideOffset: 0.5f, backwardOffset: 1f);
+                break;
         }
     }
 
@@ -69,6 +72,9 @@ public class CameraManager : MonoBehaviour
                 HideActionCamera();
                 break;
             case SwordAction swordAction:
+                HideActionCamera();
+                break;
+            case FireBallAction fireBallAction:
                 HideActionCamera();
                 break;
         }

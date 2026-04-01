@@ -40,6 +40,7 @@ public class UnitActionSystemUI : MonoBehaviour
 
         foreach (BaseAction baseAction in selectedUnit.GetBaseActionArray())
         {
+            if(baseAction is IAbility) continue; // only show non-ability actions
             Transform actionButtonTransform = Instantiate(actionButtonPrefab, actionButtonContainerTransform);
             ActionButtonUI actionButtonUI = actionButtonTransform.GetComponent<ActionButtonUI>();
             actionButtonUI.SetBaseAction(baseAction);

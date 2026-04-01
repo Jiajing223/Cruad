@@ -66,7 +66,7 @@ public class HealthSystem : MonoBehaviour
     }
 
     public int GetCalculatedDamage(Unit userUnit, Unit targetUnit)
-{
-    return calculateDamage(userUnit, targetUnit);
-}
+    {
+        return calculateDamage(userUnit, targetUnit);
+    }
 }

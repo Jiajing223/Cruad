@@ -24,7 +24,9 @@ public class DamagePreviewUI : MonoBehaviour
         Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(args.targetGridPosition);
         if (targetUnit == null) return;
 
-        int damage = targetUnit.GetComponent<HealthSystem>().GetCalculatedDamage(shooterUnit, targetUnit);
+        BaseAction action = UnitActionSystem.Instance.GetSelectedAction();
+
+        int damage = action.GetDamagePreview(shooterUnit, targetUnit);
         damagePreviewText.text = $"Damage: {damage}";
 
         gameObject.SetActive(true);

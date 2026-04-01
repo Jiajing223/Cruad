@@ -1163,7 +1163,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7746785424968111513}
-  m_LocalRotation: {x: -0.026038926, y: 0.9560221, z: 0.016327377, w: 0.2916799}
+  m_LocalRotation: {x: -0.026038935, y: 0.9560221, z: 0.016327387, w: 0.2916799}
   m_LocalPosition: {x: 0.151, y: 0.017, z: 0.049}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
@@ -1223,6 +1223,9 @@ GameObject:
   - component: {fileID: 6333553180545358095}
   - component: {fileID: 4873576554274639441}
   - component: {fileID: 6577342071636191804}
+  - component: {fileID: 5656292476442740901}
+  - component: {fileID: 1690607922}
+  - component: {fileID: 1690607923}
   m_Layer: 7
   m_Name: UnitMale
   m_TagString: Untagged
@@ -1445,6 +1448,47 @@ MonoBehaviour:
   speed: 5
   critialChance: 5
   moveRange: 4
+--- !u!114 &5656292476442740901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7746785425700992747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5f0311b11c02034fa9c6026b4497b20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  abilityMenuUI: {fileID: 0}
+--- !u!114 &1690607922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7746785425700992747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fda139d3bb4fed43a8d82a5af6edbcb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1690607923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7746785425700992747}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cced0da87b652d54d91575014eb1b879, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  obstaclesLayerMask:
+    serializedVersion: 2
+    m_Bits: 320
+  fireballProjectilePrefab: {fileID: 9138027293109500747, guid: 234c9380a560b0a498fe8ea468435759, type: 3}
 --- !u!1 &7747342256806428759
 GameObject:
   m_ObjectHideFlags: 0
@@ -2905,7 +2949,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7748261159966106109}
   m_LocalRotation: {x: 0.23888499, y: -0.32672933, z: -0.56156594, w: 0.7216825}
-  m_LocalPosition: {x: 0.009860197, y: 0.9111507, z: -0.0039569535}
+  m_LocalPosition: {x: 0.0098609915, y: 0.9111507, z: -0.003957748}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
