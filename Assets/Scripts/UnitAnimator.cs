@@ -5,10 +5,10 @@ using System;
 public class UnitAnimator : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-    [SerializeField] private Transform bulletProjectilePrefab;
-    [SerializeField] private Transform shootPointTransform;
-    [SerializeField] private Transform rifleTransform;
-    [SerializeField] private Transform swordTransform;
+    [SerializeField] private Transform bulletProjectilePrefab  ;
+    [SerializeField] private Transform shootPointTransform ;
+    [SerializeField] private Transform rifleTransform ;
+    [SerializeField] private Transform swordTransform ;
 
     private bool isShooting;
     private void Awake()
@@ -145,7 +145,7 @@ public class UnitAnimator : MonoBehaviour
     // {
     //     Unit thisUnit = GetComponent<Unit>();
     //     BaseAction action = sender as BaseAction;
-    //     if (action == null || action.GetUnit() != thisUnit) return;
+    //     if (action = || action.GetUnit() != thisUnit) return;
     //     isShooting = false;
     //     thisUnit.ForceUpdateCoverState();
     // }

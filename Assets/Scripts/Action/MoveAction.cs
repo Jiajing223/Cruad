@@ -33,7 +33,6 @@ public class MoveAction : BaseAction
         {
             return;
         }
-
         Vector3 targetPosition = positionList[currentPositionIndex];
 
         if (isChangingFloors)
@@ -53,7 +52,6 @@ public class MoveAction : BaseAction
         else
         {
             Vector3 moveDirection = (targetPosition - transform.position).normalized;
-
             float rotateSpeed = 10f;
             // Rotate semi-linearly the unit to face the movement direction
             transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotateSpeed);
@@ -114,7 +112,6 @@ public class MoveAction : BaseAction
             gridPosition,
             out int pathLength
         );
-
         currentPositionIndex = 0;
         positionList = new List<Vector3>();
 
@@ -123,7 +120,6 @@ public class MoveAction : BaseAction
             positionList.Add(LevelGrid.Instance.GetWorldPosition(pathGridPosition));
         }
         // positionList.RemoveAt(0); // Remove the starting position
-        
         // Move the unit to the target position
         OnStartMoving?.Invoke(this, EventArgs.Empty);
         ActionStart(onActionComplete);
@@ -199,7 +195,11 @@ public class MoveAction : BaseAction
 
     public override EnemyAIAction GetBestEnemyAIAction(GridPosition gridPosition)
     {
-        int targetCountAtGridPosition = unit.GetShootAction().GetTargetCountAtPosition(gridPosition);
+        int targetCountAtGridPosition = 0;
+        if (unit.GetShootAction() != null)
+        {
+            targetCountAtGridPosition = unit.GetShootAction().GetTargetCountAtPosition(gridPosition);
+        }
         
         // 射击目标优先
         if (targetCountAtGridPosition > 0)
@@ -212,7 +212,6 @@ public class MoveAction : BaseAction
         }
         else
         {
-            // 找到最近的玩家单位
             List<Unit> playerUnits = UnitManager.Instance.GetFriendlyUnitList();
             int closestDistance = int.MaxValue;
 
@@ -230,13 +229,12 @@ public class MoveAction : BaseAction
             }
             
             
-            // 距离越近价值越高
             int moveValue = 100 - closestDistance;
             
             return new EnemyAIAction
             {
                 gridPosition = gridPosition,
-                actionValue = Mathf.Max(1, moveValue), // 至少为1
+                actionValue = Mathf.Max(1, moveValue),
             };
         }
     }

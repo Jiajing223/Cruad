@@ -6,7 +6,7 @@ using System;
 
 public class HealthSystem : MonoBehaviour
 {
-    [SerializeField] private int health = 100;
+    [SerializeField] private int health = 10;
     public event EventHandler OnDead;
     public event EventHandler OnDamaged;
 

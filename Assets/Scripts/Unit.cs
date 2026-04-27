@@ -23,6 +23,7 @@ public class Unit : MonoBehaviour
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
+    public static event EventHandler OnEnemyUnitDead;
     public static event EventHandler OnAnyCoverStateChanged;
     [SerializeField] private bool isEnemy;
 
@@ -194,6 +195,10 @@ public class Unit : MonoBehaviour
         LevelGrid.Instance.RemoveUnitGridPosition(gridPosition);
         Destroy(gameObject);
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+        if (isEnemy)
+        {
+            OnEnemyUnitDead?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public float GetHealthNormalized()

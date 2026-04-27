@@ -7,6 +7,10 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    private Vector3 originalPosition;
+    private Quaternion originalRotation;
+    private bool hasStoredTransform = false;
+    private Coroutine followCoroutine;
     public static CameraManager Instance { get; private set; }
     [SerializeField] private GameObject actionCameraGameObject;
 
@@ -46,6 +50,21 @@ public class CameraManager : MonoBehaviour
     {
         switch (sender)
         {
+            case MoveAction moveAction:
+                if (!hasStoredTransform)
+                {
+                    originalPosition = actionCameraGameObject.transform.position;
+                    originalRotation = actionCameraGameObject.transform.rotation;
+                    hasStoredTransform = true;
+                }
+                if (followCoroutine != null)
+                {
+                    StopCoroutine(followCoroutine);
+                }
+
+                followCoroutine = StartCoroutine(FollowUnit(moveAction.GetUnit()));
+                ShowActionCamera();
+                break;
             case ShootAction shootAction:
                 SetupActionCamera(shootAction.GetUnit(), shootAction.GetTargetUnit(), sideOffset: 0.5f, backwardOffset: 1f);
                 break;
@@ -57,7 +76,35 @@ public class CameraManager : MonoBehaviour
                 break;
         }
     }
+    private IEnumerator FollowUnit(Unit unit)
+    {
+        float height = 0.9f;
+        float shoulderOffset = 1f;
+        float distance = 1f;
 
+        while (unit != null)
+        {
+            Vector3 forward = unit.transform.forward;
+            Vector3 right = unit.transform.right;
+
+            Vector3 targetPosition =
+                unit.GetWorldPosition() +
+                Vector3.up * height -
+                forward * distance +
+                right * shoulderOffset;
+
+            actionCameraGameObject.transform.position = targetPosition;
+
+            Vector3 lookTarget =
+                unit.GetWorldPosition() +
+                Vector3.up * height +
+                forward * 1.5f;
+
+            actionCameraGameObject.transform.LookAt(lookTarget);
+
+            yield return null;
+        }
+    }
     public void ShowShootCameraPreview(Unit shooterUnit, GridPosition targetPosition)
     {
         Unit targetUnit = LevelGrid.Instance.GetUnitOnGridPosition(targetPosition);
@@ -68,6 +115,22 @@ public class CameraManager : MonoBehaviour
     {
         switch(sender)
         {
+            case MoveAction moveAction:
+                if (followCoroutine != null)
+                {
+                    StopCoroutine(followCoroutine);
+                    followCoroutine = null;
+                }
+
+                if (hasStoredTransform)
+                {
+                    actionCameraGameObject.transform.position = originalPosition;
+                    actionCameraGameObject.transform.rotation = originalRotation;
+                    hasStoredTransform = false;
+                }
+
+                HideActionCamera();
+                break;
             case ShootAction shootAction:
                 HideActionCamera();
                 break;

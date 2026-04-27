@@ -23,7 +23,7 @@ public class UnitManager : MonoBehaviour
         unitList = new List<Unit>();
         friendlyUnitList = new List<Unit>();
         enemyUnitList = new List<Unit>();
-
+        
     }
     private void Start()
     {
