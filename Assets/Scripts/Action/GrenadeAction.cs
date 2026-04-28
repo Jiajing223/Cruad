@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class GrenadeAction : BaseAction
 {
     [SerializeField] private Transform grenadeProjectilePrefab;
+    [SerializeField] private AudioSource grenadeThrowAudioSource;
     private int maxThrowDistance = 7;
     private void Update()
     {
@@ -20,8 +21,20 @@ public class GrenadeAction : BaseAction
         grenadeProjectile.Setup(gridPosition, OnGrenadeBehaviourComplete);
 
         ActionStart(onActionComplete);
-
+        if (grenadeThrowAudioSource != null)
+        {
+            grenadeThrowAudioSource.Play();
+        }
+        // StartCoroutine(PlayGrenadeThrowSound());
     }
+
+    private System.Collections.IEnumerator PlayGrenadeThrowSound()
+    {
+        yield return new WaitForSeconds(0.5f);
+        if (grenadeThrowAudioSource != null)        {
+            grenadeThrowAudioSource.Play();
+        }
+    } 
 
     private void OnGrenadeBehaviourComplete()
     {

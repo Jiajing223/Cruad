@@ -5,7 +5,7 @@ using UnityEngine;
 public class FireBallAction : BaseAction, IAbility
 {
     private enum State { Aiming, Shooting, Cooloff }
-
+    [SerializeField] private AudioSource fireballAudioSource;
     public event EventHandler<OnFireballEventArgs> OnFireball;
     public static event EventHandler<OnFireballEventArgs> OnAnyFireball;
     public class OnFireballEventArgs : EventArgs
@@ -100,17 +100,28 @@ public class FireBallAction : BaseAction, IAbility
         Vector3 startPosition = unit.GetWorldPosition() + Vector3.up * 1f + transform.forward * 0.5f;
         Vector3 targetPosition = targetUnit.GetWorldPosition() + Vector3.up * 0.8f;
 
+        OnAnyFireball?.Invoke(this, new OnFireballEventArgs {
+            targetUnit = targetUnit,
+            shootingUnit = unit,
+            isHit = true 
+        });
+
+        OnFireball?.Invoke(this, new OnFireballEventArgs {
+            targetUnit = targetUnit,
+            shootingUnit = unit,
+            isHit = true
+        });
+        if (fireballAudioSource != null)
+        {
+            fireballAudioSource?.Play();
+        }
         Transform projectileTransform = Instantiate(fireballProjectilePrefab, startPosition, Quaternion.identity);
 
         FireballProjectile projectile = projectileTransform.GetComponent<FireballProjectile>();
         projectile.Setup(targetPosition, projectileSpeed, () =>
         {
-           
             float hitChance = GetHitChance(unit.GetGridPosition(), targetUnit, baseHitChance);
             bool isHit = UnityEngine.Random.value <= hitChance;
-
-            OnAnyFireball?.Invoke(this, new OnFireballEventArgs { targetUnit = targetUnit, shootingUnit = unit, isHit = isHit });
-            OnFireball?.Invoke(this, new OnFireballEventArgs { targetUnit = targetUnit, shootingUnit = unit, isHit = isHit });
 
             if (isHit)
             {
@@ -121,7 +132,6 @@ public class FireBallAction : BaseAction, IAbility
             }
             else
             {
-                targetPosition.y += Vector3.up.y * UnityEngine.Random.Range(-0.5f, 1f) + Vector3.forward.y * UnityEngine.Random.Range(-0.5f, 0.5f);
                 DamagePopUpManager.Instance.ShowMiss(targetUnit.GetWorldPosition());
             }
         });

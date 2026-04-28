@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 public class SwordAction : BaseAction
 {
+    [SerializeField] private AudioSource swordAudioSource;
+
     public static event EventHandler OnAnySwordHit;
     private int maxSwordDistance = 1;
     public event EventHandler OnSwordActionStarted;
@@ -73,6 +75,10 @@ public class SwordAction : BaseAction
         stateTimer = beforeHitStateTime;
 
         OnSwordActionStarted?.Invoke(this, EventArgs.Empty);
+        if (swordAudioSource != null)
+        {
+            swordAudioSource.Play();
+        }
         ActionStart(onActionComplete);
     }
     public override string GetActionName()

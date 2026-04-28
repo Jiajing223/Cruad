@@ -877,6 +877,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isEnemy: 1
+  isEnemyUsable: 1
 --- !u!65 &6109363454467742450
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -902,6 +903,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91b7ef0ff68b2d44c9d03006dceb852d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnemyUsable: 1
+  moveAudioSource: {fileID: 0}
   maxMoveDistance: 3
 --- !u!114 &4726858121473081272
 MonoBehaviour:
@@ -915,6 +918,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd59a5a6c51473b48a4425ac91e1226b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnemyUsable: 1
 --- !u!114 &-3173360254368588485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -927,6 +931,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8143ed510d2a884ca556246b85178ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnemyUsable: 1
+  shootAudioSource: {fileID: 0}
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 256
@@ -1002,6 +1008,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 860011b0ad13db1449bfe506cc34d84e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isEnemyUsable: 1
+  swordAudioSource: {fileID: 0}
 --- !u!114 &1255724002
 MonoBehaviour:
   m_ObjectHideFlags: 0

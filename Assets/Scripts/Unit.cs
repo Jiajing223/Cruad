@@ -25,8 +25,9 @@ public class Unit : MonoBehaviour
     public static event EventHandler OnAnyUnitDead;
     public static event EventHandler OnEnemyUnitDead;
     public static event EventHandler OnAnyCoverStateChanged;
+    private EventHandler onAnyUnitMovedHandler;
     [SerializeField] private bool isEnemy;
-
+    [SerializeField] protected bool isEnemyUsable = true;
     private GridPosition gridPosition;
     private HealthSystem healthSystem;
     private UnitStat unitStat;
@@ -35,7 +36,7 @@ public class Unit : MonoBehaviour
     private ShootAction shootAction;
     private BaseAction[] baseActionArray;
     private IAbility[] abilities;
-    private const int totalActionPoints = 3;
+    private const int totalActionPoints = 2;
     private int actionPoints = totalActionPoints;
     private bool isCovered;
     private void Awake()
@@ -56,7 +57,8 @@ public class Unit : MonoBehaviour
 
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.AddUnitGridPosition(gridPosition, this);
-        LevelGrid.Instance.OnAnyUnitMovedGridPosition += (sender, e) => UpdateCoverState();
+        onAnyUnitMovedHandler = (sender, e) => UpdateCoverState();
+        LevelGrid.Instance.OnAnyUnitMovedGridPosition += onAnyUnitMovedHandler;
         healthSystem.OnDead += HealthSystem_OnDead;
     }
     private void Update()
@@ -71,7 +73,11 @@ public class Unit : MonoBehaviour
             LevelGrid.Instance.UnitMovedGridPosition(this, oldGridPosition, newGridPosition);
         }
     }
-
+    private void OnDestroy()
+    {
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        LevelGrid.Instance.OnAnyUnitMovedGridPosition -= onAnyUnitMovedHandler;
+    }
     public MoveAction GetMoveAction()
     {
         return moveAction;

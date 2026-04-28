@@ -7,7 +7,7 @@ public class MoveAction : BaseAction
     public event EventHandler OnStartMoving;
     public event EventHandler OnStopMoving;
     public event EventHandler<OnChangedFloorsStartedEventArgs> OnChangedFloorsStarted;
-    
+    [SerializeField] private AudioSource moveAudioSource;
     public class OnChangedFloorsStartedEventArgs : EventArgs
     {
         public GridPosition unitGridPosition;
@@ -79,6 +79,10 @@ public class MoveAction : BaseAction
                 }
                 // Reached final position
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
+                if (moveAudioSource != null)
+                {
+                    moveAudioSource.Stop();
+                }
                 unit.UpdateCoverState();
                 FogOfWarManager.Instance?.RefreshVisibility();
                 ActionComplete();
@@ -122,6 +126,11 @@ public class MoveAction : BaseAction
         // positionList.RemoveAt(0); // Remove the starting position
         // Move the unit to the target position
         OnStartMoving?.Invoke(this, EventArgs.Empty);
+
+        if (moveAudioSource != null)
+        {
+            moveAudioSource.Play();
+        }
         ActionStart(onActionComplete);
     }
 

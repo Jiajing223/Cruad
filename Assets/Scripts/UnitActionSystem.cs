@@ -284,7 +284,6 @@ public class UnitActionSystem : MonoBehaviour
         if (baseAction.GetActionName() == "Ability")
         {
             OnAblityActionSelected?.Invoke(this, baseAction);
-            Debug.Log("Selected ability: " + baseAction.GetActionName());
         }
     }
     // Get the currently selected action

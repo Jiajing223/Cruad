@@ -10,6 +10,7 @@ public abstract class BaseAction : MonoBehaviour
     private const float DistancePenaltyPerTile = 0.02f;
     private const float HighGroundBonus = 0.10f;
 
+    [SerializeField] protected bool isEnemyUsable = true;
     protected Unit unit;
     protected bool isActive;
     protected Action onActionComplete;
@@ -149,5 +150,10 @@ public abstract class BaseAction : MonoBehaviour
     public virtual float? GetHitChancePreview(GridPosition shooterGrid, Unit target)
     {
         return null;
+    }
+
+    public virtual bool GetIsEnemyUsable()
+    {
+        return isEnemyUsable;
     }
 }

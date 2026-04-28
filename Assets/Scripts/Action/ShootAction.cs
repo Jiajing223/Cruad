@@ -12,7 +12,7 @@ public class ShootAction : BaseAction
     }
     public event EventHandler<OnShootEventArgs> OnShoot;
     public static event EventHandler<OnShootEventArgs> OnAnyShoot;
-
+    [SerializeField] private AudioSource shootAudioSource;
 
     // To pass the target unit to the event listener, mainly for the shooting visual
     public class OnShootEventArgs : EventArgs
@@ -144,7 +144,11 @@ public class ShootAction : BaseAction
         {
             return;
         }
-
+        if (targetUnit == null)
+        {
+            ActionComplete();
+            return;
+        }
         stateTimer -= Time.deltaTime;
         switch (state)
         {
@@ -215,6 +219,10 @@ public class ShootAction : BaseAction
     }*/
     private void Shoot()
     {
+        if (shootAudioSource != null)
+        {
+            shootAudioSource.Play();
+        }
         GridPosition shooterGrid = unit.GetGridPosition();
         float hitChance = GetHitChance(shooterGrid, targetUnit);
         bool isHit = UnityEngine.Random.value <= hitChance;

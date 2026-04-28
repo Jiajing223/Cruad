@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Unity.VisualScripting;
 
 public class ThrustAction : BaseAction
 {
+    [SerializeField] private AudioSource thrustAudioSource;
     public static event EventHandler OnAnyThrustHit;
     public event EventHandler OnThrustActionStarted;
     public event EventHandler OnThrustActionCompleted;
@@ -100,6 +102,10 @@ public class ThrustAction : BaseAction
         state = State.SwingingSwordBeforeHit;
         stateTimer = 0.7f;
         OnThrustActionStarted?.Invoke(this, EventArgs.Empty);
+        if (thrustAudioSource != null)
+        {
+            thrustAudioSource.Play();
+        }
         ActionStart(onActionComplete);
     }
 

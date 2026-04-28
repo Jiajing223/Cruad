@@ -102,45 +102,42 @@ public class EnemyAI : MonoBehaviour
     }
 
     private bool TryTakeEnemyAIAction(Unit enemyUnit, Action OnEnemyAIActionComplete)
-    {
-        EnemyAIAction bestEnemyAIAction = null;  // 最佳AI行动
-        BaseAction bestBaseAction = null;        // 对应的基础行动
-
-        // 遍历单位的所有可用行动
-        foreach (BaseAction baseAction in enemyUnit.GetBaseActionArray())
         {
-            // 检查单位是否有足够的行动点数执行该行动
-            if (!enemyUnit.CanSpendActionPointsToTakeAction(baseAction))
-            {
-                continue; // 无法承担该行动，跳过
-            }
+            EnemyAIAction bestEnemyAIAction = null;
+            BaseAction bestBaseAction = null;
 
-            // 获取该行动的最佳AI决策
-            if (bestBaseAction == null)
+            foreach (BaseAction baseAction in enemyUnit.GetBaseActionArray())
             {
-                // 第一个可用的行动，直接设为最佳
-                bestEnemyAIAction = baseAction.GetBestEnemyAIAction();
-                bestBaseAction = baseAction;
-            }
-            else
-            {
-                // 与当前最佳行动比较，选择价值更高的行动
+                if (!baseAction.GetIsEnemyUsable()) continue;
+                if (!enemyUnit.CanSpendActionPointsToTakeAction(baseAction))
+                {
+                    Debug.Log($"{enemyUnit.name} can't afford {baseAction.GetActionName()}");
+                    continue;
+                }
+
                 EnemyAIAction testEnemyAIAction = baseAction.GetBestEnemyAIAction();
-                if (testEnemyAIAction != null && testEnemyAIAction.actionValue > bestEnemyAIAction.actionValue)
+                Debug.Log($"{enemyUnit.name} evaluating {baseAction.GetActionName()}: {(testEnemyAIAction == null ? "null" : testEnemyAIAction.actionValue.ToString())}");
+
+                if (bestBaseAction == null)
+                {
+                    bestEnemyAIAction = testEnemyAIAction;
+                    bestBaseAction = baseAction;
+                }
+                else if (testEnemyAIAction != null && testEnemyAIAction.actionValue > bestEnemyAIAction.actionValue)
                 {
                     bestEnemyAIAction = testEnemyAIAction;
                     bestBaseAction = baseAction;
                 }
             }
-        }
 
-        // 如果找到最佳行动且成功消耗行动点数，则执行该行动
-        if (bestEnemyAIAction != null && enemyUnit.TrySpendActionPointsToTakeAction(bestBaseAction))
-        {
-            bestBaseAction.TakeAction(bestEnemyAIAction.gridPosition, OnEnemyAIActionComplete);
-            return true;
-        }
+            Debug.Log($"{enemyUnit.name} best action: {(bestBaseAction == null ? "none" : bestBaseAction.GetActionName())}");
+            
+            if (bestEnemyAIAction != null && enemyUnit.TrySpendActionPointsToTakeAction(bestBaseAction))
+            {
+                bestBaseAction.TakeAction(bestEnemyAIAction.gridPosition, OnEnemyAIActionComplete);
+                return true;
+            }
 
-        return false; // 没有找到可执行的行动
-    }
+            return false;
+        }
 }

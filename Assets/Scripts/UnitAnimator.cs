@@ -28,12 +28,23 @@ public class UnitAnimator : MonoBehaviour
             swordAction.OnSwordActionStarted += SwordAction_OnSwordActionStarted;
             swordAction.OnSwordActionCompleted += SwordAction_OnSwordActionCompleted;
         }
+        if (TryGetComponent<FireBallAction>(out FireBallAction fireBallAction))
+        {
+            fireBallAction.OnFireball += FireBallAction_OnFireball;
+        }
+        if (TryGetComponent<ThrustAction>(out ThrustAction thrustAction))
+        {
+            thrustAction.OnThrustActionStarted += ThrustAction_OnThrust;
+        }
         // if (TryGetComponent<Unit>(out Unit unit))
         // {
         //     Unit.OnAnyCoverStateChanged += Unit_OnAnyCoverStateChanged;
         // }
     }
+
     
+
+
     private void Start()
     {
         EquipRifle();
@@ -87,7 +98,16 @@ public class UnitAnimator : MonoBehaviour
         targetUnitShootAtPosition.y += unitShoulderHeight;
         bulletProjectile.Setup(targetUnitShootAtPosition);
     }
-
+    private void FireBallAction_OnFireball(object sender, FireBallAction.OnFireballEventArgs e)
+    {
+        animator.SetTrigger("Shoot"); 
+        isShooting = true;
+    }
+    private void ThrustAction_OnThrust(object sender, EventArgs e)
+    {
+        EquipSword();
+        animator.SetTrigger("SwordSlash");
+    }
     // private void UnitActionSystem_OnUnitSelectingTarget(object sender, UnitActionSystem.ShootSelectionEventArgs args)
     // {
     //     Unit thisUnit = GetComponent<Unit>();
