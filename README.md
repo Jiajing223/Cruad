@@ -70,60 +70,22 @@ Additional tools:
 * Unity ProBuilder
 * Unity Cinemachine
 
-## Project Architecture
-
-The project follows a modular architecture where gameplay systems are separated into independent components.
-
-Main systems include:
-
-```
-Game Systems
-│
-├── Turn System
-│   └── Controls player and enemy turns
-│
-├── Grid System
-│   ├── Grid management
-│   ├── Tile interaction
-│   └── Pathfinding
-│
-├── Unit Action System
-│   ├── Movement
-│   ├── Attacks
-│   └── Interactions
-│
-├── Combat System
-│   ├── Accuracy calculation
-│   ├── Damage calculation
-│   └── Health management
-│
-├── Visibility System
-│   └── Fog of War management
-│
-└── AI System
-    └── Enemy decision making
-```
-
 ## Installation and Execution
 
 ### Requirements
 
-* Unity version: `<insert Unity version>`
+* Unity version: `2022.1.0f1`
 * Operating system: Windows (recommended)
 
 ### Steps
 
-1. Clone this repository:
-
-```bash
-git clone <repository-url>
-```
+1. Clone this repository.
 
 2. Open the project using Unity Hub.
 
 3. Select the appropriate Unity version.
 
-4. Open the main scene located in:
+4. Open the main scene located in (Scene 1 or scene 2):
 
 ```
 Assets/Scenes/<main-scene-name>
@@ -135,21 +97,12 @@ Assets/Scenes/<main-scene-name>
 
 | Action        | Control                 |
 | ------------- | ----------------------- |
-| Move camera   | Mouse / Keyboard        |
+| Move camera   | WASD                    |
 | Select unit   | Left mouse button       |
 | Move unit     | Select destination tile |
-| Rotate camera | `<insert control>`      |
+| Rotate camera | Q or E                  |
 | Zoom          | Mouse wheel             |
 
-## Screenshots
-
-*Add screenshots or GIFs of the gameplay here.*
-
-Example:
-
-```
-![Gameplay](images/gameplay.png)
-```
 
 ## Development
 
